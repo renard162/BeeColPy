@@ -11,7 +11,7 @@ Installation
 ------------
 
 **Dependencies**
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 BeeColPy requires:
 
@@ -20,7 +20,7 @@ BeeColPy requires:
 
 **BeeColPy do not to support Python 2.7.**
 BeeColPy needs Python 3.5 or newer.
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 **User installation**
 ~~~~~~~~~~~~~~~~~
@@ -142,7 +142,7 @@ scout = abc_obj.get_status()[1]
 #If you want to get a list with position of all points (food sources) used in each iteration:
 food_sources = abc_obj.get_agents()
 
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Author
 --------------
