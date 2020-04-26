@@ -141,6 +141,7 @@ scout = abc_obj.get_status()[1]
 
 #If you want to get a list with position of all points (food sources) used in each iteration:
 food_sources = abc_obj.get_agents()
+
 ~~~~~~~~~~~~
 
 Author
