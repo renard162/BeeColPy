@@ -3,36 +3,36 @@
 #
 #   Samuel C P Oliveira
 #   samuelcpoliveira@gmail.com
-#   Simple Artificial Bee Colony Optimization
+#   Artificial Bee Colony Optimization
+#   This project is licensed under the MIT License.
 #   v1.0 (April 2020)
 #
 #------------------------------------------------------------------------------+
 #
 # Bibliography
-# [1] Karaboga, D.; Basturk, B. - 2007
+#
+# [1] Karaboga, D. and Basturk, B., 2007
 #     A powerful and efficient algorithm for numerical function optimization:
-#     artificial bee colony (ABC) algorithm.
+#     artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471.
 #     doi: https://doi.org/10.1007/s10898-007-9149-x
 # 
-# [2] Liu, T.; Zhang, L.; Zhang, J. - 2013
-#     Study of Binary Artificial Bee Colony Algorithm Based on Particle Swarm
-#     Optimization.
+# [2] Liu, T., Zhang, L. and Zhang, J., 2013
+#     Study of binary artificial bee colony algorithm based on particle swarm optimization.
+#     Journal of Computational Information Systems, 9(16), pp.6459-6466.
 #     link: https://api.semanticscholar.org/CorpusID:8789571
 #
-# [3] Anuar, S.; Selamat, A. ;Sallehuddin, R. - 2016
-#     A modified scout bee for artificial bee colony algorithm and its
-#     performance on optimization problems.
+# [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
+#     A modified scout bee for artificial bee colony algorithm and its performance on optimization
+#     problems. Journal of King Saud University-Computer and Information Sciences, 28(4), pp.395-406.
 #     doi: https://doi.org/10.1016/j.jksuci.2016.03.001
 #
 #------------------------------------------------------------------------------+
 """
 
 # %%
-#--- IMPORT DEPENDENCIES ------------------------------------------------------+
 import numpy as np
 import numpy.random as rng
 
-#--- MAIN ---------------------------------------------------------------------+
 class abc:
     """
     Class that applies Artificial Bee Colony (ABC) algorithm to find minimun
@@ -104,7 +104,7 @@ class abc:
     ----------
     calculate_fit(evaluated_position = Position of evaluated point)
         Calculate the cost function (value of function in point) and
-        returns the "fit" value associated (float).
+        returns the "fit" value associated (float) (according [2]).
 
     food_source_dance(index = index (int) of food source target)
         Randomizes a "neighbor" point to evaluate the <index> food source.
