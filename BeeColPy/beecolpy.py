@@ -4,7 +4,7 @@
 #   Samuel C P Oliveira
 #   samuelcpoliveira@gmail.com
 #   Simple Artificial Bee Colony Optimization
-#   2020
+#   v1.0 (April 2020)
 #
 #------------------------------------------------------------------------------+
 #
@@ -42,7 +42,7 @@ class abc:
 
     Parameters
     ----------
-    function : Pointer
+    function : Name
         A name of a function to minimize/maximize.
         Example: if the function is:
             def my_func(x): return x[0]**2 + x[1]**2 + 5*x[1]
@@ -56,7 +56,7 @@ class abc:
 
     [colony_size] : Int (default: 40)
         A value that determines the number of bees in algorithm. Half of this
-        amount determines the number of points analysed (food sources).
+        amount determines the number of points analyzed (food sources).
         According articles, half of this number determines the amount of
         Employed bees and other half is Onlooker bees.
 
@@ -75,15 +75,15 @@ class abc:
 
     [min_max] : String (default: 'min')
         Determines if algorithm will minimize or maximize the function.
-        If min_max = 'min' : Try to localize the minimun of function.
-        if min_max = 'max' : Try to localize the maximun of function.
+        If min_max = 'min' : Try to localize the minimum of function.
+        If min_max = 'max' : Try to localize the maximum of function.
     
 
     Methods - Useful to user
     ----------
     fit()
         Execute the algorithm with defined parameters.
-        Obs.: Returns a list with values found.
+        Obs.: Returns a list with values found as minimum/maximum coordinate.
 
     get_solution()
         Returns the value obtained after fit() the method.
