@@ -22,5 +22,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=['numpy']
-    python_requires='>=3.0',
+    python_requires='>=3.0'
 )
