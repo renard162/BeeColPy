@@ -15,11 +15,11 @@ Installation
 
 BeeColPy requires:
 
-- Python (>= 3.5)
+- Python (>= 3.0)
 - NumPy (>= 1.1.0)
 
 **BeeColPy do not to support Python 2.7.**
-BeeColPy needs Python 3.5 or newer.
+BeeColPy needs Python 3.0 or newer.
 ~~~~~~~~~~~~~~~~~
 
 **User installation**
@@ -28,7 +28,7 @@ If you already have a working installation of numpy,
 the easiest way to install BeeColPy is using ``pip`` and ``git``   ::
 
 ~~~~~~~~~~~~~~~~~
-    pip install git+git://github.com/renard162/BeeColPy.git
+    pip install beecolpy
 ~~~~~~~~~~~~~~~~~
 
 Usage Instructions
