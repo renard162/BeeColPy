@@ -9,7 +9,7 @@ setup(
   author = 'Samuel Carlos Pessoa Oliveira',
   author_email = 'samuelcpoliveira@gmail.com',
   url = 'https://github.com/renard162/BeeColPy',
-  download_url = 'https://github.com/user/reponame/archive/v_01.tar.gz',    # I explain this later on
+  download_url = 'https://github.com/renard162/BeeColPy/archive/v1.0.tar.gz',
   keywords = ['PSO', 'ABC', 'Bee', 'Colony', 'Solver', 'Optimize', 'metaheuristic'],
   install_requires=[
           'numpy'
