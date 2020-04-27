@@ -54,13 +54,13 @@ class abc:
         Obs.: The number of boundaries determines the dimension of function.
         Example: [(-5,5), (-20,20)]
 
-    [colony_size] : Int (default: 40)
+    [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
         amount determines the number of points analyzed (food sources).
         According articles, half of this number determines the amount of
         Employed bees and other half is Onlooker bees.
 
-    [scouts] : Float (default: 0)
+    [scouts] : Float --optional-- (default: 0)
         Determines the limit of tries for scout bee discard a food source and
         replace for a new one.
         If scouts = 0 : Scout_limit = colony_size * dimension
@@ -70,14 +70,14 @@ class abc:
         If scout >= iterations: Scout event never occurs
         Obs.: Scout_limit is rounded down in all cases.
 
-    [iterations] : Int (default: 50)
+    [iterations] : Int --optional-- (default: 50)
         The number of iterations executed by algorithm.
 
-    [min_max] : String (default: 'min')
+    [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
         If min_max = 'min' : Try to localize the minimum of function.
         If min_max = 'max' : Try to localize the maximum of function.
-    
+
 
     Methods - Useful to user
     ----------
@@ -96,7 +96,7 @@ class abc:
             - Number of scout events during iterations
 
     get_agents()
-        Returns a list with the position os each food source during
+        Returns a list with the position of each food source during
         each iteration.
 
     

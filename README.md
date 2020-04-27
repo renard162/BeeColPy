@@ -23,11 +23,11 @@ BeeColPy needs Python 3.5 or newer.
 ~~~~~~~~~~~~~~~~~
 
 **User installation**
-~~~~~~~~~~~~~~~~~
 
 If you already have a working installation of numpy,
-the easiest way to install BeeColPy is using ``pip``   ::
+the easiest way to install BeeColPy is using ``pip`` and ``git``   ::
 
+~~~~~~~~~~~~~~~~~
     pip install git+git://github.com/renard162/BeeColPy.git
 ~~~~~~~~~~~~~~~~~
 
@@ -36,7 +36,7 @@ Usage Instructions
 ~~~~~~~~~~~~~~~~~
 
 #Load data and options:
-abc_obj = abc(function, boundaries, colony_size=40, scouts=10, iterations=50, min_max='min')
+abc_obj = abc(function, boundaries, colony_size=40, scouts=0, iterations=50, min_max='min')
 
 #Execute algorithm: 
 solution = abc_obj.fit()
@@ -51,7 +51,6 @@ solution = abc_obj.get_solution()
 agents = abc_obj.get_agents()
 
 """
-
 Parameters
 ----------
 function : Name
@@ -107,7 +106,7 @@ get_status()
 		- Number of scout events during iterations
 
 get_agents()
-	Returns a list with the position os each food source during
+	Returns a list with the position of each food source during
 	each iteration.
 """
 ~~~~~~~~~~~~~~~~~
@@ -146,8 +145,7 @@ food_sources = abc_obj.get_agents()
 
 Author
 --------------
-**Samuel Carlos Pessoa Oliveira**
-samuelcpoliveira@gmail.com
+**Samuel Carlos Pessoa Oliveira** - samuelcpoliveira@gmail.com
 
 License
 --------------
