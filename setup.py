@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="beecolpy",
-    version="1.0a",
+    version="1.1",
     license='MIT',
     author="Samuel Carlos Pessoa Oliveira",
     author_email="samuelcpoliveira@gmail.com",

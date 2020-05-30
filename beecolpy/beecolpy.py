@@ -126,8 +126,10 @@ class abc:
             self.scout_limit = int(scouts)
         
         self.foods = []
-        for _ in range(self.employed_onlookers_count):
+        for i in range(self.employed_onlookers_count):
             self.foods.append(_FoodSource(self))
+            while np.isnan(self.foods[i].fit):
+                self.foods[i] = _FoodSource(self)
         
         self.best_food_source = self.foods[np.argmax([food.fit for food in self.foods])]
         self.agents = []
