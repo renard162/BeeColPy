@@ -85,7 +85,7 @@ class abc:
         algorithm in a infinite loop.
 
 
-    Methods - Useful to user
+    Methods
     ----------
     fit()
         Execute the algorithm with defined parameters.
@@ -105,15 +105,6 @@ class abc:
         Returns a list with the position of each food source during
         each iteration.
 
-    
-    Methods - Useful to developers
-    ----------
-    calculate_fit(evaluated_position = Position of evaluated point)
-        Calculate the cost function (value of function in point) and
-        returns the "fit" value associated (float) (according [2]).
-
-    food_source_dance(index = index (int) of food source target)
-        Randomizes a "neighbor" point to evaluate the <index> food source.
     """
 
     def __init__(self, function, boundaries, colony_size=40, scouts=0, iterations=50, min_max='min', eliminate_nan=True):
@@ -134,9 +125,8 @@ class abc:
         
         self.foods = []
         for i in range(self.employed_onlookers_count):
-            self.foods.append(_FoodSource(self))
-            while (np.isnan(self.foods[i].fit) and self.nan_protection):
-                self.foods[i] = _FoodSource(self)
+            self.foods.append(_FoodSource(self,_ABCUtils(self)))
+            _ABCUtils(self).nan_protection(i)
         
         self.best_food_source = self.foods[np.argmax([food.fit for food in self.foods])]
         self.agents = []
@@ -144,30 +134,13 @@ class abc:
         
         self.scout_status = 0
         self.iteration_status = 0
-        
 
-    def calculate_fit(self,evaluated_position):
-        #eq. (2) [2] (Convert "cost function" to "fit function")
-        cost = self.cost_function(evaluated_position)
-        if (self.min_max_selector == 'min'): #Minimize function
-            fit_value = (1 + np.abs(cost)) if (cost < 0) else (1/(1 + cost))
-        else: #Maximize function
-            fit_value = (1 + cost) if (cost > 0) else (1/(1 + np.abs(cost)))
-        return fit_value
-    
-    def food_source_dance(self,index):
-        #Generate a partner food source to generate a neighbor point to evaluate
-        while True: #Criterion from [1] geting another food source at random
-            d = int(rng.randint(0,self.employed_onlookers_count))
-            if (d != index):
-                break
-        self.foods[index].evaluate_neighbor(self.foods[d].position)
     
     def fit(self):
         for iteration in range(1,self.max_iterations+1):
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
-            [self.food_source_dance(i) for i in range(self.employed_onlookers_count)]
+            [_ABCUtils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
             max_fit = np.max([food.fit for food in self.foods])
             onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
     
@@ -179,7 +152,7 @@ class abc:
             while (p < self.employed_onlookers_count):
                 if (rng.uniform(0,1) < onlooker_probability[i]):
                     p += 1
-                    self.food_source_dance(i)
+                    _ABCUtils(self).food_source_dance(i)
                     max_fit = np.max([food.fit for food in self.foods])
                     onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
                 i = (i+1) if (i < (self.employed_onlookers_count-1)) else 0
@@ -197,9 +170,8 @@ class abc:
                 trial_counters = np.where(np.array(trial_counters) == max(trial_counters))[0].tolist()
                 i = trial_counters[rng.randint(0,len(trial_counters))]
                 
-                self.foods[i] = _FoodSource(self) #Replace food source
-                while (np.isnan(self.foods[i].fit) and self.nan_protection):
-                    self.foods[i] = _FoodSource(self)
+                self.foods[i] = _FoodSource(self,_ABCUtils(self)) #Replace food source
+                _ABCUtils(self).nan_protection(i)
                 self.scout_status += 1
             
             self.agents.append([food.position for food in self.foods])
@@ -216,6 +188,7 @@ class abc:
         return self.iteration_status, self.scout_status
 
 
+
 class _FoodSource:
     """
     Class that represents a food source (evaluated point). Useful to developers.
@@ -225,6 +198,9 @@ class _FoodSource:
     ----------
     abc : Class
         A main class with variables and methods thats correlate food sources.
+
+    utils : Class
+        A class with methods invisible to user.
 
 
     Methods
@@ -240,13 +216,14 @@ class _FoodSource:
         Trial counter is used to trigger scout event during iterations.
     """
 
-    def __init__(self,abc):
+    def __init__(self,abc,utils):
         #When a food source is initialized, randomize a position inside boundaries and
         #calculate the "fit"
         self.abc = abc
+        self.abcu = utils
         self.trial_counter = 0
         self.position = [rng.uniform(*self.abc.boundaries[i]) for i in range(len(self.abc.boundaries))]
-        self.fit = self.abc.calculate_fit(self.position)
+        self.fit = self.abcu.calculate_fit(self.position)
         
     def evaluate_neighbor(self,partner_position):
         #Randomize one coodinate (one dimension) to generate a neighbor point
@@ -261,7 +238,7 @@ class _FoodSource:
         
         #Changes the coordinate "j" from food source to new "x_j" generating the neighbor point
         neighbor_position = [(self.position[i] if (i != j) else xj_new) for i in range(len(self.abc.boundaries))]
-        neighbor_fit = self.abc.calculate_fit(neighbor_position)
+        neighbor_fit = self.abcu.calculate_fit(neighbor_position)
 
         #Greedy selection
         if (neighbor_fit > self.fit):
@@ -270,3 +247,53 @@ class _FoodSource:
             self.trial_counter = 0
         else:
             self.trial_counter += 1
+
+
+
+class _ABCUtils:
+    """
+    Class with methods invisible to user. 
+
+
+    Parameters
+    ----------
+    abc : Class
+        A main class with variables and methods thats correlate food sources.
+
+
+    Methods
+    ----------
+    nan_protection(food_index = index of tested food source)
+        Re-generate food sources that get NaN as cost value to prevent loop lock.
+
+    calculate_fit(evaluated_position = Position of evaluated point)
+        Calculate the cost function (value of function in point) and
+        returns the "fit" value associated (float) (according [2]).
+
+    food_source_dance(index = index (int) of food source target)
+        Randomizes a "neighbor" point to evaluate the <index> food source.
+    """
+
+    def __init__(self,abc):
+        self.abc = abc
+
+    def nan_protection(self,food_index):
+        while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
+            self.abc.foods[food_index] = _FoodSource(self.abc,self)
+
+    def calculate_fit(self,evaluated_position):
+        #eq. (2) [2] (Convert "cost function" to "fit function")
+        cost = self.abc.cost_function(evaluated_position)
+        if (self.abc.min_max_selector == 'min'): #Minimize function
+            fit_value = (1 + np.abs(cost)) if (cost < 0) else (1/(1 + cost))
+        else: #Maximize function
+            fit_value = (1 + cost) if (cost > 0) else (1/(1 + np.abs(cost)))
+        return fit_value
+    
+    def food_source_dance(self,index):
+        #Generate a partner food source to generate a neighbor point to evaluate
+        while True: #Criterion from [1] geting another food source at random
+            d = int(rng.randint(0,self.abc.employed_onlookers_count))
+            if (d != index):
+                break
+        self.abc.foods[index].evaluate_neighbor(self.abc.foods[d].position)
