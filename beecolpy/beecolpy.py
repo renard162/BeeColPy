@@ -78,6 +78,12 @@ class abc:
         If min_max = 'min' : Try to localize the minimum of function.
         If min_max = 'max' : Try to localize the maximum of function.
 
+    [eliminate_nan] : Boolean --optional-- (default: True)
+        If true, re-generate food sources that get NaN value as cost during
+        initialization or during scout events. This option usualy helps the
+        algorith stability because, in rare cases, NaN values can lock the
+        algorithm in a infinite loop.
+
 
     Methods - Useful to user
     ----------
@@ -110,11 +116,12 @@ class abc:
         Randomizes a "neighbor" point to evaluate the <index> food source.
     """
 
-    def __init__(self, function, boundaries, colony_size=40, scouts=0, iterations=50, min_max='min'):
+    def __init__(self, function, boundaries, colony_size=40, scouts=0, iterations=50, min_max='min', eliminate_nan=True):
         self.boundaries = boundaries
         self.min_max_selector = min_max
         self.cost_function = function
         self.max_iterations = int(iterations)
+        self.nan_protection = eliminate_nan
         
         self.employed_onlookers_count = int(colony_size/2)
         
@@ -128,7 +135,7 @@ class abc:
         self.foods = []
         for i in range(self.employed_onlookers_count):
             self.foods.append(_FoodSource(self))
-            while np.isnan(self.foods[i].fit):
+            while (np.isnan(self.foods[i].fit) and self.nan_protection):
                 self.foods[i] = _FoodSource(self)
         
         self.best_food_source = self.foods[np.argmax([food.fit for food in self.foods])]
@@ -191,6 +198,8 @@ class abc:
                 i = trial_counters[rng.randint(0,len(trial_counters))]
                 
                 self.foods[i] = _FoodSource(self) #Replace food source
+                while (np.isnan(self.foods[i].fit) and self.nan_protection):
+                    self.foods[i] = _FoodSource(self)
                 self.scout_status += 1
             
             self.agents.append([food.position for food in self.foods])

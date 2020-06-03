@@ -36,7 +36,8 @@ Usage Instructions
 ~~~~~~~~~~~~~~~~~
 
 #Load data and options:
-abc_obj = abc(function, boundaries, colony_size=40, scouts=0, iterations=50, min_max='min')
+abc_obj = abc(function, boundaries, colony_size=40, scouts=0,
+			 iterations=50, min_max='min', eliminate_nan=True)
 
 #Execute algorithm: 
 solution = abc_obj.fit()
@@ -88,6 +89,12 @@ boundaries : List of Tuples
 	Determines if algorithm will minimize or maximize the function.
 	If min_max = 'min' : Try to localize the minimum of function.
 	If min_max = 'max' : Try to localize the maximum of function.
+
+[eliminate_nan] : Boolean --optional-- (default: True)
+        If true, re-generate food sources that get NaN value as cost during
+        initialization or during scout events. This option usualy helps the
+        algorith stability because, in rare cases, NaN values can lock the
+        algorithm in a infinite loop.
 
 Methods
 ----------
