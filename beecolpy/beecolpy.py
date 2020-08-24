@@ -39,11 +39,9 @@
 #
 #------------------------------------------------------------------------------+
 """
-
-# %%
 import numpy as np
 import numpy.random as rng
-import scipy.special as sps #Only used in binary ABC form
+from scipy.special import expit #Only used in binary ABC form
 
 class abc:
     """
@@ -95,6 +93,8 @@ class abc:
         initialization or during scout events. This option usualy helps the
         algorith stability because, in rare cases, NaN values can lock the
         algorithm in a infinite loop.
+        Obs.: NaN protection can lock algorithm in infinite loop if the function has
+              too many values of domain returning NaN.
 
 
     Methods
@@ -135,6 +135,7 @@ class abc:
         
         self.employed_onlookers_count = int(colony_size/2)
         
+        scouts = np.abs(scouts)
         if (scouts == 0):
             self.scout_limit = int(self.employed_onlookers_count * len(self.boundaries))
         elif (scouts < 1):
@@ -210,9 +211,9 @@ class abc:
 
 class binabc:
     """
-    Class that applies Binary Artificial Bee Colony (BABC) algorithm to find minimun
-    or maximun of a function thats receive the number of bits as input and
-    returns a vector of bits as output.
+    Class that applies Binary Artificial Bee Colony (BABC [5], based in Binary PSO [4])
+    algorithm to find minimun or maximun of a function thats receive the number of
+    bits as input and returns a vector of bits as output.
 
 
     Parameters
@@ -223,14 +224,18 @@ class binabc:
             def my_func(x): return x[0] or (x[1] and x[2])
             Put "my_func" as parameter.
 
+    -=x=-
     bits_count : Int
         The number of bits that compose the output vector.
 
-    # boundaries : List of Tuples
-    #     A list of tuples containing the lower and upper boundaries of each
-    #     dimension of function domain.
-    #     Obs.: The number of boundaries determines the dimension of function.
-    #     Example: [(-5,5), (-20,20)]
+    boundaries : List of Tuples
+        A list of tuples containing the lower and upper boundaries that will be
+        applied over sigmoid function to determine the probability to bit become 1.
+        Example: [(-5,5), (-20,20)]
+    
+    Obs.: If boundaries are set, then it's take the priority over the bits_count.
+          If boundaries are not set, then the boundaries became (-10,10) to each bit.
+    -=x=-
 
     [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
@@ -246,21 +251,29 @@ class binabc:
             Obs.: scout = 0.5 is used in [3] as benchmark.
         If scout = (1 to iterations) : Scout_limit = scout
         If scout >= iterations: Scout event never occurs
-        Obs.: Scout_limit is rounded down in all cases.
+        Obs.1: Scout_limit is rounded down in all cases.
+        Obs.2: In Binary form, the scouts tends to be more relevant than in
+               continuous form. If your problem are badly solved, try to reduce
+               the scouts value.
 
     [iterations] : Int --optional-- (default: 50)
         The number of iterations executed by algorithm.
+
+    [best_model_iterations] : int --optional-- (default:iterations count)
+        Due stochastic aspect of Binary form of particle based metaheuristic,
+        after execution of ABC, the cost function will be calculated
+        "best_model_iterations" times and the "best" result will be returned.
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
         If min_max = 'min' : Try to localize the minimum of function.
         If min_max = 'max' : Try to localize the maximum of function.
 
-    [nan_protection] : Boolean --optional-- (default: True)
-        If true, re-generate food sources that get NaN value as cost during
-        initialization or during scout events. This option usualy helps the
-        algorith stability because, in rare cases, NaN values can lock the
-        algorithm in a infinite loop.
+    [nan_protection] : Int --optional-- (default: 2)
+        If greater than 0, if the cost function returns NaN, the algorithm tries to
+        recalculate the cost function up to "nan_protection" times.
+        Obs.: NaN protection can lock algorithm in infinite loop if the function has
+              too many values of domain returning NaN.
 
 
     Methods
@@ -285,7 +298,7 @@ class binabc:
     """
     def __init__(self,
                  function,
-                 bits_count,
+                 bits_count: int=0,
                  boundaries: list=[],
                  colony_size: int=40,
                  scouts: float=0.5,
@@ -298,28 +311,28 @@ class binabc:
         self.function = function
         self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
         self.min_max_selector = min_max
-        self.nan_protection = nan_protection
+        self.nan_protection = (nan_protection > 0)
+        self.nan_count = int(nan_protection - 1)
 
         self.bin_abc_object = abc(_BinABCUtils(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=(nan_protection>0))
+                                  min_max=min_max, nan_protection=self.nan_protection)
 
         self.result_bit_vector = None
 
     def fit(self):
         self.bin_abc_object.fit()
-        self.result_bit_vector = _BinABCUtils(self).get_medium_result(self.bin_abc_object.get_solution())
+        self.result_bit_vector = _BinABCUtils(self).get_best_solution(self.bin_abc_object.get_solution())
         return self.result_bit_vector
 
     def get_agents(self):
-        return self.bin_abc_object.get_agents()
+        return self.bin_abc_object.agents
 
     def get_solution(self):
         return self.result_bit_vector
 
     def get_status(self):
         return self.bin_abc_object.iteration_status, self.bin_abc_object.scout_status
-
 
 
 
@@ -334,7 +347,7 @@ class _FoodSource:
         A main class with variables and methods thats correlate food sources.
 
     utils : Class
-        A class with methods invisible to user.
+        Auxiliary class with base methods of ABC algorithm.
 
 
     Methods
@@ -385,7 +398,7 @@ class _FoodSource:
 
 class _ABCUtils:
     """
-    Class with methods invisible to user. 
+    Auxiliary class with base methods of ABC algorithm. 
 
 
     Parameters
@@ -433,28 +446,51 @@ class _ABCUtils:
 
 
 class _BinABCUtils:
+    """
+    Auxiliary class with base methods of Binary ABC algorithm. 
+
+
+    Parameters
+    ----------
+    babc : Class
+        A main class with main variables.
+
+
+    Methods
+    ----------
+    determine_bit_vector(probability_vector = Vector with values to be applied over sigmoid function)
+        Applies the values over a sigmoid funtion and obtain stochastically the
+        resultant bit vector.
+
+    iteration_cost_function(probability_vector = Vector with values to be applied over sigmoid function)
+        Applies the converted domain point to the cost function.
+
+    get_best_solution(probability_vector = Vector with values to be applied over sigmoid function)
+        Determines stochastically the bit vector to be applied over cost function
+        "best_model_iterations" times and returns the "best" bit vector resultant.
+    """
     def __init__(self, babc):
         self.babc = babc
 
     def determine_bit_vector(self,probability_vector):
-        return [(rng.uniform(0,1) < sps.expit(probability)) for probability in probability_vector]
+        return [(rng.uniform(0,1) < expit(probability)) for probability in probability_vector]
 
     def iteration_cost_function(self,probability_vector):
         cost = self.babc.function(self.determine_bit_vector(probability_vector))
-        if (self.babc.nan_protection > 0):
+        if self.babc.nan_protection:
             i = 0
-            while (np.isnan(cost) and (i < (self.babc.nan_protection-1))):
+            while (np.isnan(cost) and (i < self.babc.nan_count)):
                 cost = self.babc.function(self.determine_bit_vector(probability_vector))
                 i += 1
         return cost
 
-    def get_medium_result(self,probability_vector):
+    def get_best_solution(self,probability_vector):
         for i in range(self.babc.best_model_iterations):
             temp_bit_vector = self.determine_bit_vector(probability_vector)
             temp_cost_value = self.babc.function(temp_bit_vector)
-            if (self.babc.nan_protection > 0):
+            if self.babc.nan_protection:
                 j = 0
-                while (np.isnan(temp_cost_value) and (j < (self.babc.nan_protection-1))):
+                while (np.isnan(temp_cost_value) and (j < self.babc.nan_count)):
                     temp_bit_vector = self.determine_bit_vector(probability_vector)
                     temp_cost_value = self.babc.function(temp_bit_vector)
                     j += 1
@@ -467,3 +503,4 @@ class _BinABCUtils:
                     cost_value = temp_cost_value
                     bit_vector = temp_bit_vector
         return bit_vector
+
