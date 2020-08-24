@@ -72,7 +72,7 @@ boundaries : List of Tuples
 	According articles, half of this number determines the amount of
 	Employed bees and other half is Onlooker bees.
 
-[scouts] : Float --optional-- (default: 0)
+[scouts] : Float --optional-- (default: 0.5)
 	Determines the limit of tries for scout bee discard a food source and
 	replace for a new one.
 	If scouts = 0 : Scout_limit = colony_size * dimension
