@@ -45,8 +45,8 @@ from scipy.special import expit #Only used in binary ABC form
 
 class abc:
     """
-    Class that applies Artificial Bee Colony (ABC) algorithm to find minimun
-    or maximun of a function thats receive a vector of floats as input and
+    Class that applies Artificial Bee Colony (ABC) algorithm to find minimum
+    or maximum of a function that's receive a vector of floats as input and
     returns a float as output.
 
 
@@ -90,8 +90,8 @@ class abc:
 
     [nan_protection] : Boolean --optional-- (default: True)
         If true, re-generate food sources that get NaN value as cost during
-        initialization or during scout events. This option usualy helps the
-        algorith stability because, in rare cases, NaN values can lock the
+        initialization or during scout events. This option usually helps the
+        algorithm stability because, in rare cases, NaN values can lock the
         algorithm in a infinite loop.
         Obs.: NaN protection can lock algorithm in infinite loop if the function has
               too many values of domain returning NaN.
@@ -212,7 +212,7 @@ class abc:
 class binabc:
     """
     Class that applies Binary Artificial Bee Colony (BABC [5], based in Binary PSO [4])
-    algorithm to find minimun or maximun of a function thats receive the number of
+    algorithm to find minimum or maximum of a function that's receive the number of
     bits as input and returns a vector of bits as output.
 
 
@@ -344,7 +344,7 @@ class _FoodSource:
     Parameters
     ----------
     abc : Class
-        A main class with variables and methods thats correlate food sources.
+        A main class with variables and methods that's correlate food sources.
 
     utils : Class
         Auxiliary class with base methods of ABC algorithm.
@@ -358,7 +358,7 @@ class _FoodSource:
         If the "fit" value of neighbor point is better, permute this position with
         original food source's position and set trial counter of this food source
         to 0.
-        If original food source "fit" value is better, mantain the original position
+        If original food source "fit" value is better, maintain the original position
         and increases trial counter in 1.
         Trial counter is used to trigger scout event during iterations.
     """
@@ -404,7 +404,7 @@ class _ABCUtils:
     Parameters
     ----------
     abc : Class
-        A main class with variables and methods thats correlate food sources.
+        A main class with variables and methods that's correlate food sources.
 
 
     Methods
@@ -459,7 +459,7 @@ class _BinABCUtils:
     Methods
     ----------
     determine_bit_vector(probability_vector = Vector with values to be applied over sigmoid function)
-        Applies the values over a sigmoid funtion and obtain stochastically the
+        Applies the values over a sigmoid function and obtain stochastically the
         resultant bit vector.
 
     iteration_cost_function(probability_vector = Vector with values to be applied over sigmoid function)
