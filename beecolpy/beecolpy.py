@@ -44,6 +44,10 @@
 #     Evolutionary Methods (Vol. 1, No. 1, pp. 2-7).
 #     link: http://hdl.handle.net/10072/48831
 #
+# [7] Pampará, G. and Engelbrecht, A.P., 2011, April. Binary artificial bee colony
+#     optimization. In 2011 IEEE Symposium on Swarm Intelligence (pp. 1-8). IEEE.
+#     doi: https://doi.org/10.1109/SIS.2011.5952562
+#
 #------------------------------------------------------------------------------+
 """
 import numpy as np
@@ -119,6 +123,7 @@ class abc:
         Returns a tuple with:
             - Number of iterations executed
             - Number of scout events during iterations
+            - Number of times that NaN protection was activated
 
     get_agents()
         Returns a list with the position of each food source during
@@ -149,7 +154,11 @@ class abc:
             self.scout_limit = int(self.employed_onlookers_count * len(self.boundaries) * scouts)
         else:
             self.scout_limit = int(scouts)
-        
+
+        self.scout_status = 0
+        self.iteration_status = 0
+        self.nan_status = 0
+
         self.foods = []
         for i in range(self.employed_onlookers_count):
             self.foods.append(_FoodSource(self,_ABCUtils(self)))
@@ -158,9 +167,7 @@ class abc:
         self.best_food_source = self.foods[np.argmax([food.fit for food in self.foods])]
         self.agents = []
         self.agents.append([food.position for food in self.foods])
-        
-        self.scout_status = 0
-        self.iteration_status = 0
+
 
     
     def fit(self):
@@ -181,7 +188,10 @@ class abc:
                     p += 1
                     _ABCUtils(self).food_source_dance(i)
                     max_fit = np.max([food.fit for food in self.foods])
-                    onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
+                    if (self.foods[i].fit != max_fit):
+                        onlooker_probability[i] = 0.9*(self.foods[i].fit/max_fit)+0.1
+                    else:
+                        onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
                 i = (i+1) if (i < (self.employed_onlookers_count-1)) else 0
 
             #--> Memorize best solution <--
@@ -212,7 +222,7 @@ class abc:
         return self.best_food_source.position
     
     def get_status(self):
-        return self.iteration_status, self.scout_status
+        return self.iteration_status, self.scout_status, self.nan_status
 
 
 
@@ -244,6 +254,15 @@ class binabc:
           If boundaries are not set, then the boundaries became (-10,10) to each bit.
     -=x=-
 
+    [transfer_function] : String --optional-- (default: 'sigmoid')
+        Defines the transfer function used to calculate the probability for each bit
+        becomes '1'.
+        The possibilities are explained on article [6]: http://hdl.handle.net/10072/48831
+        If transfer_function = 'sigmoid' : S(x) = 1/[1 + exp(-x)]
+        If transfer_function = 'sigmoid-2x' : S(x) = 1/[1 + exp(-2*x)]
+        If transfer_function = 'sigmoid-x/2' : S(x) = 1/[1 + exp(-x/2)]
+        If transfer_function = 'sigmoid-x/3' : S(x) = 1/[1 + exp(-x/3)]
+
     [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
         amount determines the number of points analyzed (food sources).
@@ -270,6 +289,8 @@ class binabc:
         Due stochastic aspect of Binary form of particle based metaheuristic,
         after execution of ABC, the cost function will be calculated
         "best_model_iterations" times and the "best" result will be returned.
+        If best_model_iterations = 0 : Tries "iterations" times.
+        If best_model_iterations = N : Tries "N" times.
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
@@ -297,6 +318,7 @@ class binabc:
         Returns a tuple with:
             - Number of iterations executed
             - Number of scout events during iterations
+            - Number of times that NaN protection was activated
 
     get_agents()
         Returns a list with the position of each food source during
@@ -341,36 +363,135 @@ class binabc:
         return self.result_bit_vector
 
     def get_status(self):
-        return self.bin_abc_object.iteration_status, self.bin_abc_object.scout_status
+        return self.bin_abc_object.iteration_status, self.bin_abc_object.scout_status, self.bin_abc_object.nan_status
 
 
 
-class _FoodSource:
+class amabc:
     """
-    Class that represents a food source (evaluated point). Useful to developers.
+    Class that applies Angle Modulated Artificial Bee Colony (AMABC [7])
+    algorithm to find minimum or maximum of a function that's receive the number of
+    bits as input and returns a vector of bits as output.
 
 
     Parameters
     ----------
-    abc : Class
-        A main class with variables and methods that's correlate food sources.
+    function : Name
+        A name of a function to minimize/maximize.
+        Example: if the function is:
+            def my_func(x): return x[0] or (x[1] and x[2])
+            Put "my_func" as parameter.
 
-    utils : Class
-        Auxiliary class with base methods of ABC algorithm.
+    -=x=-
+    bits_count : Int
+        The number of bits that compose the output vector.
+
+    boundaries : List of Tuples
+        A list of tuples containing the lower and upper boundaries that will be
+        applied over sigmoid function to determine the probability to bit become 1.
+        Example: [(-5,5), (-20,20)]
+    
+    Obs.: If boundaries are set, then it's take the priority over the bits_count.
+          If boundaries are not set, then the boundaries became (-2,2) to each bit.
+    -=x=-
+
+    [colony_size] : Int --optional-- (default: 40)
+        A value that determines the number of bees in algorithm. Half of this
+        amount determines the number of points analyzed (food sources).
+        According articles, half of this number determines the amount of
+        Employed bees and other half is Onlooker bees.
+
+    [scouts] : Float --optional-- (default: 0.5)
+        Determines the limit of tries for scout bee discard a food source and
+        replace for a new one.
+        If scouts = 0 : Scout_limit = colony_size * dimension
+        If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
+            Obs.: scout = 0.5 is used in [3] as benchmark.
+        If scout = (1 to iterations) : Scout_limit = scout
+        If scout >= iterations: Scout event never occurs
+        Obs.1: Scout_limit is rounded down in all cases.
+        Obs.2: In Binary form, the scouts tends to be more relevant than in
+               continuous form. If your problem are badly solved, try to reduce
+               the scouts value.
+
+    [iterations] : Int --optional-- (default: 50)
+        The number of iterations executed by algorithm.
+
+    [min_max] : String --optional-- (default: 'min')
+        Determines if algorithm will minimize or maximize the function.
+        If min_max = 'min' : Try to localize the minimum of function.
+        If min_max = 'max' : Try to localize the maximum of function.
+
+    [nan_protection] : Boolean --optional-- (default: True)
+        If true, re-generate food sources that get NaN value as cost during
+        initialization or during scout events. This option usually helps the
+        algorithm stability because, in rare cases, NaN values can lock the
+        algorithm in a infinite loop.
+        Obs.: NaN protection can lock algorithm in infinite loop if the function has
+              too many values of domain returning NaN.
 
 
     Methods
     ----------
-    evaluate_neighbor(evaluated_position = Position of evaluated point)
-        Using evaluated position (partner position), generate a neighbor point,
-        evaluate the "fit" value of it and applies greedy selection on it.
-        If the "fit" value of neighbor point is better, permute this position with
-        original food source's position and set trial counter of this food source
-        to 0.
-        If original food source "fit" value is better, maintain the original position
-        and increases trial counter in 1.
-        Trial counter is used to trigger scout event during iterations.
+    fit()
+        Execute the algorithm with defined parameters.
+        Obs.: Returns a list with values found as minimum/maximum coordinate.
+
+    get_solution()
+        Returns the value obtained after fit() the method.
+        Obs.: If fit() is not executed, return "None"
+
+    get_status()
+        Returns a tuple with:
+            - Number of iterations executed
+            - Number of scout events during iterations
+            - Number of times that NaN protection was activated
+
+    get_agents()
+        Returns a list with the position of each food source during
+        each iteration.
+
     """
+    def __init__(self,
+                 function,
+                 bits_count: int=0,
+                 boundaries: list=[],
+                 colony_size: int=40,
+                 scouts: float=0.5,
+                 iterations: int=50,
+                 min_max: str='min',
+                 nan_protection: bool=True):
+
+        boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
+        self.function = function
+        self.min_max_selector = min_max
+        self.nan_protection = nan_protection
+
+        self.am_abc_object = abc(_AMABCUtils(self).iteration_cost_function, boundaries,
+                                  colony_size=colony_size, scouts=scouts, iterations=iterations,
+                                  min_max=min_max, nan_protection=self.nan_protection)
+
+        self.result_bit_vector = None
+
+    def fit(self):
+        self.am_abc_object.fit()
+        self.result_bit_vector = _AMABCUtils(self).determine_bit_vector(self.am_abc_object.get_solution())
+        return self.result_bit_vector
+
+    def get_agents(self):
+        return self.am_abc_object.agents
+
+    def get_solution(self):
+        return self.result_bit_vector
+
+    def get_status(self):
+        return self.am_abc_object.iteration_status, self.am_abc_object.scout_status, self.am_abc_object.nan_status
+
+
+
+
+class _FoodSource:
+
     def __init__(self,abc,utils):
         #When a food source is initialized, randomize a position inside boundaries and
         #calculate the "fit"
@@ -406,33 +527,13 @@ class _FoodSource:
 
 
 class _ABCUtils:
-    """
-    Auxiliary class with base methods of ABC algorithm. 
 
-
-    Parameters
-    ----------
-    abc : Class
-        A main class with variables and methods that's correlate food sources.
-
-
-    Methods
-    ----------
-    nan_protection(food_index = index of tested food source)
-        Re-generate food sources that get NaN as cost value to prevent loop lock.
-
-    calculate_fit(evaluated_position = Position of evaluated point)
-        Calculate the cost function (value of function in point) and
-        returns the "fit" value associated (float) (according [2]).
-
-    food_source_dance(index = index (int) of food source target)
-        Randomizes a "neighbor" point to evaluate the <index> food source.
-    """
     def __init__(self,abc):
         self.abc = abc
 
     def nan_protection(self,food_index):
         while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
+            self.abc.nan_status += 1
             self.abc.foods[food_index] = _FoodSource(self.abc,self)
 
     def calculate_fit(self,evaluated_position):
@@ -455,41 +556,21 @@ class _ABCUtils:
 
 
 class _BinABCUtils:
-    """
-    Auxiliary class with base methods of Binary ABC algorithm. 
 
-
-    Parameters
-    ----------
-    babc : Class
-        A main class with main variables.
-
-
-    Methods
-    ----------
-    determine_bit_vector(probability_vector = Vector with values to be applied over sigmoid function)
-        Applies the values over a sigmoid function and obtain stochastically the
-        resultant bit vector.
-
-    iteration_cost_function(probability_vector = Vector with values to be applied over sigmoid function)
-        Applies the converted domain point to the cost function.
-
-    get_best_solution(probability_vector = Vector with values to be applied over sigmoid function)
-        Determines stochastically the bit vector to be applied over cost function
-        "best_model_iterations" times and returns the "best" bit vector resultant.
-    """
     def __init__(self, babc):
         self.babc = babc
 
     def transfer(self,probability): #Transfer functions discussion in [6]
         if (self.babc.transfer_function == 'sigmoid'):
-            return sps.expit(probability)
+            return sps.expit(probability)   #S(x) = 1/[1 + exp(-x)]
         elif (self.babc.transfer_function == 'sigmoid-2x'):
-            return sps.expit(probability*2)
+            return sps.expit(probability*2) #S(x) = 1/[1 + exp(-2*x)]
         elif (self.babc.transfer_function == 'sigmoid-x/2'):
-            return sps.expit(probability/2)
+            return sps.expit(probability/2) #S(x) = 1/[1 + exp(-x/2)]
         elif (self.babc.transfer_function == 'sigmoid-x/3'):
-            return sps.expit(probability/3)
+            return sps.expit(probability/3) #S(x) = 1/[1 + exp(-x/3)]
+        else:
+            raise Exception('\nInvalid transfer function.\nValid values include:\nsigmoid\nsigmoid-2x\nsigmoid-x/2\nsigmoid-x/3')
 
     def determine_bit_vector(self,probability_vector):
         return [(rng.uniform(0,1) < self.transfer(probability)) for probability in probability_vector]
@@ -523,3 +604,19 @@ class _BinABCUtils:
                     bit_vector = temp_bit_vector
         return bit_vector
 
+
+
+class _AMABCUtils:
+
+    def __init__(self, amabc):
+        self.amabc = amabc
+
+    def angle_modulation(self,angle):
+        pi2 = 2*np.pi
+        return np.sin(pi2 * angle * np.cos(pi2 * angle))
+
+    def determine_bit_vector(self,angle_vector):
+        return [(self.angle_modulation(angle) > 0) for angle in angle_vector]
+
+    def iteration_cost_function(self,angle_vector):
+        return self.amabc.function(self.determine_bit_vector(angle_vector))

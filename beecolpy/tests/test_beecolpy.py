@@ -7,13 +7,18 @@ import numpy as np
 import numpy.random as rng
 import numpy.testing as npt
 
-def sphere(x): #Continuous benchmark
+def sphere(x): #Continuous and NaN benchmark
     #Sphere function
     #Min: x=(0,0)
     total = 0
+    test = 0
     for i in range(len(x)):
         total += x[i]**2
-    return total
+        test += x[i]
+    if (test<5):
+        return total
+    else:
+        return np.nan
 
 def translate_bin(b):
     return np.sum([(b[::-1][i])*mt.pow(2,i) for i in range(len(b))])
@@ -37,6 +42,11 @@ base_bin_abc_obj = binabc(squared_bin, bits_count=4,
                           colony_size=10, scouts=0.5,
                           iterations=10, min_max='min',
                           nan_protection=3)
+
+base_am_abc_obj = amabc(squared_bin, bits_count=4,
+                        colony_size=10, scouts=0.5,
+                        iterations=10, min_max='min',
+                        nan_protection=True)
 
 # %%
 def test_food_source_generation():
@@ -131,7 +141,7 @@ def test_get_status():
     abc_obj.fit()
     # return abc_obj.get_status()
     npt.assert_array_almost_equal(abc_obj.get_status(),
-                                  (10, 1), decimal=0)
+                                  (10, 1, 0), decimal=0)
 
 # %%
 def test_bin_food_source_generation():
@@ -226,5 +236,6 @@ def test_bin_get_status():
     bin_abc_obj.fit()
     # return bin_abc_obj.get_status()
     npt.assert_array_almost_equal(bin_abc_obj.get_status(),
-                                  (10, 5), decimal=0)
+                                  (10, 5, 0), decimal=0)
+
 # %%
