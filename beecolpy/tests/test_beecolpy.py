@@ -33,6 +33,7 @@ base_abc_obj = abc(sphere, [(-10,10) for _ in range(2)],
                    nan_protection=True)
 
 base_bin_abc_obj = binabc(squared_bin, bits_count=4,
+                          transfer_function='sigmoid',
                           colony_size=10, scouts=0.5,
                           iterations=10, min_max='min',
                           nan_protection=3)

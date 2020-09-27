@@ -22,8 +22,9 @@
 #     link: https://api.semanticscholar.org/CorpusID:8789571
 #
 # [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
-#     A modified scout bee for artificial bee colony algorithm and its performance on optimization
-#     problems. Journal of King Saud University-Computer and Information Sciences, 28(4), pp.395-406.
+#     A modified scout bee for artificial bee colony algorithm and its performance
+#     on optimization problems. Journal of King Saud University-Computer and Information
+#     Sciences, 28(4), pp.395-406.
 #     doi: https://doi.org/10.1016/j.jksuci.2016.03.001
 #
 # [4] Kennedy, J. and Eberhart, R.C., 1997, October. A discrete binary version
@@ -37,11 +38,17 @@
 #     (pp. 1-8). IEEE.
 #     doi: https://doi.org/10.1109/SIS.2011.5952562
 #
+# [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. and Salehi,
+#     S., 2011. A study of different transfer functions for binary version of
+#     particle swarm optimization. In International Conference on Genetic and
+#     Evolutionary Methods (Vol. 1, No. 1, pp. 2-7).
+#     link: http://hdl.handle.net/10072/48831
+#
 #------------------------------------------------------------------------------+
 """
 import numpy as np
 import numpy.random as rng
-from scipy.special import expit #Only used in binary ABC form
+import scipy.special as sps #import expit #Only used in binary ABC form
 
 class abc:
     """
@@ -300,6 +307,7 @@ class binabc:
                  function,
                  bits_count: int=0,
                  boundaries: list=[],
+                 transfer_function: str='sigmoid',
                  colony_size: int=40,
                  scouts: float=0.5,
                  iterations: int=50,
@@ -309,6 +317,7 @@ class binabc:
 
         boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
         self.function = function
+        self.transfer_function = transfer_function
         self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
         self.min_max_selector = min_max
         self.nan_protection = (nan_protection > 0)
@@ -472,8 +481,18 @@ class _BinABCUtils:
     def __init__(self, babc):
         self.babc = babc
 
+    def transfer(self,probability): #Transfer functions discussion in [6]
+        if (self.babc.transfer_function == 'sigmoid'):
+            return sps.expit(probability)
+        elif (self.babc.transfer_function == 'sigmoid-2x'):
+            return sps.expit(probability*2)
+        elif (self.babc.transfer_function == 'sigmoid-x/2'):
+            return sps.expit(probability/2)
+        elif (self.babc.transfer_function == 'sigmoid-x/3'):
+            return sps.expit(probability/3)
+
     def determine_bit_vector(self,probability_vector):
-        return [(rng.uniform(0,1) < expit(probability)) for probability in probability_vector]
+        return [(rng.uniform(0,1) < self.transfer(probability)) for probability in probability_vector]
 
     def iteration_cost_function(self,probability_vector):
         cost = self.babc.function(self.determine_bit_vector(probability_vector))
