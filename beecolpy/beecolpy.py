@@ -52,7 +52,7 @@
 """
 import numpy as np
 import random as rng
-import scipy.special as sps #import expit #Only used in binary ABC form
+import scipy.special as sps #Only used in binary ABC form
 
 class abc:
     """
