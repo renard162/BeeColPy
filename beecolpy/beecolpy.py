@@ -44,14 +44,14 @@
 #     Evolutionary Methods (Vol. 1, No. 1, pp. 2-7).
 #     link: http://hdl.handle.net/10072/48831
 #
-# [7] Pampará, G. and Engelbrecht, A.P., 2011, April. Binary artificial bee colony
-#     optimization. In 2011 IEEE Symposium on Swarm Intelligence (pp. 1-8). IEEE.
-#     doi: https://doi.org/10.1109/SIS.2011.5952562
+# [7] Huang, S.C., 2015. Polygonal approximation using an artificial bee colony
+#     algorithm. Mathematical Problems in Engineering, 2015.
+#     doi: https://doi.org/10.1155/2015/375926
 #
 #------------------------------------------------------------------------------+
 """
 import numpy as np
-import numpy.random as rng
+import random as rng
 import scipy.special as sps #import expit #Only used in binary ABC form
 
 class abc:
@@ -176,7 +176,7 @@ class abc:
             #Generate and evaluate a neighbor point to every food source
             [_ABCUtils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
             max_fit = np.max([food.fit for food in self.foods])
-            onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
+            onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
     
             #--> Onlooker bee phase <--
             #Based in probability, generate a neighbor point and evaluate again some food sources
@@ -189,9 +189,9 @@ class abc:
                     _ABCUtils(self).food_source_dance(i)
                     max_fit = np.max([food.fit for food in self.foods])
                     if (self.foods[i].fit != max_fit):
-                        onlooker_probability[i] = 0.9*(self.foods[i].fit/max_fit)+0.1
+                        onlooker_probability[i] = _ABCUtils(self).prob_i(self.foods[i].fit, max_fit)
                     else:
-                        onlooker_probability = [0.9*(food.fit/max_fit)+0.1 for food in self.foods]
+                        onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
                 i = (i+1) if (i < (self.employed_onlookers_count-1)) else 0
 
             #--> Memorize best solution <--
@@ -205,7 +205,7 @@ class abc:
             if (max(trial_counters)>self.scout_limit):
                 #Take the index of replaced food source
                 trial_counters = np.where(np.array(trial_counters) == max(trial_counters))[0].tolist()
-                i = trial_counters[rng.randint(0,len(trial_counters))]
+                i = trial_counters[rng.randrange(0,len(trial_counters))]
                 
                 self.foods[i] = _FoodSource(self,_ABCUtils(self)) #Replace food source
                 _ABCUtils(self).nan_protection(i)
@@ -297,7 +297,7 @@ class binabc:
         If min_max = 'min' : Try to localize the minimum of function.
         If min_max = 'max' : Try to localize the maximum of function.
 
-    [nan_protection] : Int --optional-- (default: 2)
+    [nan_protection] : Int --optional-- (default: 4)
         If greater than 0, if the cost function returns NaN, the algorithm tries to
         recalculate the cost function up to "nan_protection" times.
         Obs.: NaN protection can lock algorithm in infinite loop if the function has
@@ -335,7 +335,7 @@ class binabc:
                  iterations: int=50,
                  best_model_iterations: int=0,
                  min_max: str='min',
-                 nan_protection: int=2):
+                 nan_protection: int=4):
 
         boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
         self.function = function
@@ -369,7 +369,7 @@ class binabc:
 
 class amabc:
     """
-    Class that applies Angle Modulated Artificial Bee Colony (AMABC [7])
+    Class that applies Angle Modulated Artificial Bee Colony (AMABC [5])
     algorithm to find minimum or maximum of a function that's receive the number of
     bits as input and returns a vector of bits as output.
 
@@ -464,12 +464,10 @@ class amabc:
 
         boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
         self.function = function
-        self.min_max_selector = min_max
-        self.nan_protection = nan_protection
 
         self.am_abc_object = abc(_AMABCUtils(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=self.nan_protection)
+                                  min_max=min_max, nan_protection=nan_protection)
 
         self.result_bit_vector = None
 
@@ -503,7 +501,7 @@ class _FoodSource:
         
     def evaluate_neighbor(self,partner_position):
         #Randomize one coodinate (one dimension) to generate a neighbor point
-        j = rng.randint(0,len(self.abc.boundaries))
+        j = rng.randrange(0,len(self.abc.boundaries))
         
         #eq. (2.2) [1] (new coordinate "x_j" to generate a neighbor point)
         xj_new = self.position[j] + rng.uniform(-1,1)*(self.position[j] - partner_position[j])
@@ -536,6 +534,12 @@ class _ABCUtils:
             self.abc.nan_status += 1
             self.abc.foods[food_index] = _FoodSource(self.abc,self)
 
+    def prob_i(self,actual_fit,max_fit):
+        # Improved probability function [7]
+        return 0.9*(actual_fit/max_fit) + 0.1
+        # Original probability function [1]
+        # return actual_fit/np.sum([food.fit for food in self.abc.foods])
+
     def calculate_fit(self,evaluated_position):
         #eq. (2) [2] (Convert "cost function" to "fit function")
         cost = self.abc.cost_function(evaluated_position)
@@ -548,7 +552,7 @@ class _ABCUtils:
     def food_source_dance(self,index):
         #Generate a partner food source to generate a neighbor point to evaluate
         while True: #Criterion from [1] geting another food source at random
-            d = int(rng.randint(0,self.abc.employed_onlookers_count))
+            d = int(rng.randrange(0,self.abc.employed_onlookers_count))
             if (d != index):
                 break
         self.abc.foods[index].evaluate_neighbor(self.abc.foods[d].position)
@@ -612,6 +616,9 @@ class _AMABCUtils:
         self.amabc = amabc
 
     def angle_modulation(self,angle):
+        # Equation (8) from [5] with constants:
+        # g(x) = sin{2 * pi * (x-a) * b * cos[2 * pi * (x-a) * c]} + d
+        # a=0 b=1 c=1 d=0
         pi2 = 2*np.pi
         return np.sin(pi2 * angle * np.cos(pi2 * angle))
 
