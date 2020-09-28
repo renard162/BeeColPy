@@ -122,7 +122,7 @@ get_agents()
 ~~~~~~~~~~~~~~~~~
 
 
-For cost function with binary domain using probabilistic-based solver.
+For cost function with binary domain using probabilistic-based solver:
 ~~~~~~~~~~~~~~~~~
 Class that applies Binary Artificial Bee Colony (BABC [5], based in Binary PSO [4])
 algorithm to find minimum or maximum of a function that's receive the number of
@@ -237,7 +237,7 @@ get_agents()
 ~~~~~~~~~~~~~~~~~
 
 
-For cost function with binary domain using deterministic-based solver.
+For cost function with binary domain using deterministic-based solver:
 ~~~~~~~~~~~~~~~~~
 Class that applies Angle Modulated Artificial Bee Colony (AMABC [5])
 algorithm to find minimum or maximum of a function that's receive the number of
@@ -357,8 +357,8 @@ abc_obj.fit() #Execute the algorithm
 #If you want to get the obtained solution after execute the fit() method:
 solution = abc_obj.get_solution()
 
-#If you want to get the number of iterations executed and number of times that
-#scout event occur:
+#If you want to get the number of iterations executed, number of times that
+#scout event occur and number of times that NaN protection actuated:
 iterations = abc_obj.get_status()[0]
 scout = abc_obj.get_status()[1]
 nan_events = abc_obj.get_status()[2]
