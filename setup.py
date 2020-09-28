@@ -10,7 +10,7 @@ setuptools.setup(
     author="Samuel Carlos Pessoa Oliveira",
     author_email="samuelcpoliveira@gmail.com",
     description="Artificial Bee Colony solver",
-    keywords = ['PSO', 'ABC', 'Bee', 'Colony', 'Binary', 'Solver', 'Optimize', 'metaheuristic'],
+    keywords = ['PSO', 'ABC', 'Bee', 'Colony', 'Binary', 'Angle Modulated', 'Solver', 'Optimize', 'metaheuristic'],
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/renard162/BeeColPy",

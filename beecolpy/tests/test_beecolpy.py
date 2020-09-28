@@ -50,6 +50,7 @@ base_am_abc_obj = amabc(squared_bin, bits_count=4,
 
 # %%
 def test_food_source_generation():
+    # Test algorithm initialization
     global base_abc_obj
     # return [food.position for food in base_abc_obj.foods]
     npt.assert_array_almost_equal([food.position for food in base_abc_obj.foods],
@@ -61,6 +62,7 @@ def test_food_source_generation():
 
 # %%
 def test_fit_solution():
+    # Test solver capability
     global base_abc_obj
     abc_obj = deepcopy(base_abc_obj)
     rng.seed(1)
@@ -71,6 +73,7 @@ def test_fit_solution():
 
 # %%
 def test_get_agents():
+    # Verifies the process step-by-step
     global base_abc_obj
     abc_obj = deepcopy(base_abc_obj)
     rng.seed(2)
@@ -135,6 +138,7 @@ def test_get_agents():
 
 # %%
 def test_get_status():
+    # Test exploration and NaN protection
     global base_abc_obj
     abc_obj = deepcopy(base_abc_obj)
     rng.seed(3)
@@ -145,6 +149,7 @@ def test_get_status():
 
 # %%
 def test_bin_food_source_generation():
+    # Test algorithm initialization
     global base_bin_abc_obj
     # return [food.position for food in base_bin_abc_obj.bin_abc_object.foods]
     npt.assert_array_almost_equal([food.position for food in base_bin_abc_obj.bin_abc_object.foods],
@@ -156,6 +161,7 @@ def test_bin_food_source_generation():
 
 # %%
 def test_bin_fit_solution():
+    # Test solver capability
     global base_bin_abc_obj
     bin_abc_obj = deepcopy(base_bin_abc_obj)
     rng.seed(1)
@@ -166,6 +172,7 @@ def test_bin_fit_solution():
 
 # %%
 def test_bin_get_agents():
+    # Verifies the process step-by-step
     global base_bin_abc_obj
     bin_abc_obj = deepcopy(base_bin_abc_obj)
     rng.seed(2)
@@ -230,6 +237,7 @@ def test_bin_get_agents():
 
 # %%
 def test_bin_get_status():
+    # Test exploration
     global base_bin_abc_obj
     bin_abc_obj = deepcopy(base_bin_abc_obj)
     rng.seed(3)
@@ -240,6 +248,7 @@ def test_bin_get_status():
 
 # %%
 def test_am_food_source_generation():
+    # Test algorithm initialization
     global base_am_abc_obj
     # return [food.position for food in base_am_abc_obj.am_abc_object.foods]
     npt.assert_array_almost_equal([food.position for food in base_am_abc_obj.am_abc_object.foods],
@@ -251,6 +260,7 @@ def test_am_food_source_generation():
 
 # %%
 def test_am_fit_solution():
+    # Test solver capability
     global base_am_abc_obj
     am_abc_obj = deepcopy(base_am_abc_obj)
     rng.seed(1)
@@ -261,6 +271,7 @@ def test_am_fit_solution():
 
 # %%
 def test_am_get_agents():
+    # Verifies the process step-by-step
     global base_am_abc_obj
     am_abc_obj = deepcopy(base_am_abc_obj)
     rng.seed(2)
@@ -325,6 +336,7 @@ def test_am_get_agents():
 
 # %%
 def test_am_get_status():
+    # Test exploration
     global base_am_abc_obj
     am_abc_obj = deepcopy(base_am_abc_obj)
     rng.seed(3)

@@ -130,16 +130,16 @@ bits as input and returns a vector of bits as output.
 
 Step-by-step:
 #Load data and options:
-abc_obj = abc(function, bits_count, transfer_function='sigmoid',
-			  colony_size=40, scouts=0.5, iterations=50,
-			  best_model_iterations=0,
-			  min_max='min', nan_protection=4)
+bin_abc_obj = binabc(function, bits_count, transfer_function='sigmoid',
+				     colony_size=40, scouts=0.5, iterations=50,
+				     best_model_iterations=0,
+				     min_max='min', nan_protection=4)
 
 #Execute algorithm: 
-abc_obj.fit()
+bin_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
-solution = abc_obj.get_solution()
+solution = bin_abc_obj.get_solution()
 
 """
 Parameters
@@ -245,14 +245,14 @@ bits as input and returns a vector of bits as output.
 
 Step-by-step:
 #Load data and options:
-abc_obj = abc(function, bits_count, colony_size=40, scouts=0.5, iterations=50,
-			  min_max='min', nan_protection=True)
+am_abc_obj = amabc(function, bits_count, colony_size=40, scouts=0.5, iterations=50,
+			       min_max='min', nan_protection=True)
 
 #Execute algorithm:
-abc_obj.fit()
+am_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
-solution = abc_obj.get_solution()
+solution = am_abc_obj.get_solution()
 
 """
 Parameters
