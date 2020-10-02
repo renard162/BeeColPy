@@ -50,6 +50,8 @@ abc_obj.fit()
 #Get solution after execute fit() without execute it again:
 solution = abc_obj.get_solution()
 
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
+
 """
 Parameters
 ----------
@@ -112,7 +114,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 
@@ -140,6 +142,8 @@ bin_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
 solution = bin_abc_obj.get_solution()
+
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
 
 """
 Parameters
@@ -225,7 +229,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 
@@ -253,6 +257,8 @@ am_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
 solution = am_abc_obj.get_solution()
+
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
 
 """
 Parameters
@@ -324,7 +330,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 

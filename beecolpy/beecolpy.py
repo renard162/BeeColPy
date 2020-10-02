@@ -121,7 +121,7 @@ class abc:
 
     get_status()
         Returns a tuple with:
-            - Number of iterations executed
+            - Number of complete iterations executed
             - Number of scout events during iterations
             - Number of times that NaN protection was activated
 
@@ -175,7 +175,7 @@ class abc:
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
             [_ABCUtils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
-            max_fit = np.max([food.fit for food in self.foods])
+            max_fit = np.nanmax([food.fit for food in self.foods])
             onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
             _ABCUtils(self).nan_lock_check()
     
@@ -185,10 +185,10 @@ class abc:
             p = 0 #Onlooker bee index
             i = 0 #Food source index
             while (p < self.employed_onlookers_count):
-                if (rng.uniform(0,1) < onlooker_probability[i]):
+                if (rng.uniform(0,1) <= onlooker_probability[i]):
                     p += 1
                     _ABCUtils(self).food_source_dance(i)
-                    max_fit = np.max([food.fit for food in self.foods])
+                    max_fit = np.nanmax([food.fit for food in self.foods])
                     if (self.foods[i].fit != max_fit):
                         onlooker_probability[i] = _ABCUtils(self).prob_i(self.foods[i].fit, max_fit)
                     else:
@@ -317,7 +317,7 @@ class binabc:
 
     get_status()
         Returns a tuple with:
-            - Number of iterations executed
+            - Number of complete iterations executed
             - Number of scout events during iterations
             - Number of times that NaN protection was activated
 
@@ -444,7 +444,7 @@ class amabc:
 
     get_status()
         Returns a tuple with:
-            - Number of iterations executed
+            - Number of complete iterations executed
             - Number of scout events during iterations
             - Number of times that NaN protection was activated
 
@@ -532,7 +532,7 @@ class _ABCUtils:
 
     def nan_lock_check(self):
         if not(self.abc.nan_protection): #If NaN protection is anebled, there's no need to waste computational power checking NaN.
-            if (sum([np.isnan(food.fit) for food in self.abc.foods]) > 0):
+            if (sum([np.isnan(food.fit) for food in self.abc.foods]) >= len(self.abc.foods)):
                 raise Exception('All food sources\'s fit becomes NaN and beecolpy locks into infinite loop. Enable nan_protection to prevent this.')
 
     def nan_protection(self,food_index):
