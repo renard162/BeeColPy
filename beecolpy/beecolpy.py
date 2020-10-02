@@ -52,7 +52,7 @@
 """
 import numpy as np
 import random as rng
-import scipy.special as sps #Only used in binary ABC form
+from scipy import special as sps #Only used in binary ABC form
 
 class abc:
     """
@@ -104,8 +104,8 @@ class abc:
         initialization or during scout events. This option usually helps the
         algorithm stability because, in rare cases, NaN values can lock the
         algorithm in a infinite loop.
-        Obs.: NaN protection can lock algorithm in infinite loop if the function has
-              too many values of domain returning NaN.
+        Obs.: NaN protection can drastically increases calculation time if
+              analysed function has too many values of domain returning NaN.
 
 
     Methods
@@ -163,7 +163,7 @@ class abc:
         for i in range(self.employed_onlookers_count):
             self.foods.append(_FoodSource(self,_ABCUtils(self)))
             _ABCUtils(self).nan_protection(i)
-        
+
         self.best_food_source = self.foods[np.argmax([food.fit for food in self.foods])]
         self.agents = []
         self.agents.append([food.position for food in self.foods])
@@ -177,6 +177,7 @@ class abc:
             [_ABCUtils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
             max_fit = np.max([food.fit for food in self.foods])
             onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
+            _ABCUtils(self).nan_lock_check()
     
             #--> Onlooker bee phase <--
             #Based in probability, generate a neighbor point and evaluate again some food sources
@@ -300,8 +301,8 @@ class binabc:
     [nan_protection] : Int --optional-- (default: 4)
         If greater than 0, if the cost function returns NaN, the algorithm tries to
         recalculate the cost function up to "nan_protection" times.
-        Obs.: NaN protection can lock algorithm in infinite loop if the function has
-              too many values of domain returning NaN.
+        Obs.: NaN protection can drastically increases calculation time if
+              analysed function has too many values of domain returning NaN.
 
 
     Methods
@@ -427,8 +428,8 @@ class amabc:
         initialization or during scout events. This option usually helps the
         algorithm stability because, in rare cases, NaN values can lock the
         algorithm in a infinite loop.
-        Obs.: NaN protection can lock algorithm in infinite loop if the function has
-              too many values of domain returning NaN.
+        Obs.: NaN protection can drastically increases calculation time if
+              analysed function has too many values of domain returning NaN.
 
 
     Methods
@@ -529,6 +530,11 @@ class _ABCUtils:
     def __init__(self,abc):
         self.abc = abc
 
+    def nan_lock_check(self):
+        if not(self.abc.nan_protection): #If NaN protection is anebled, there's no need to waste computational power checking NaN.
+            if (sum([np.isnan(food.fit) for food in self.abc.foods]) > 0):
+                raise Exception('All food sources\'s fit becomes NaN and beecolpy locks into infinite loop. Enable nan_protection to prevent this.')
+
     def nan_protection(self,food_index):
         while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
             self.abc.nan_status += 1
@@ -574,7 +580,7 @@ class _BinABCUtils:
         elif (self.babc.transfer_function == 'sigmoid-x/3'):
             return sps.expit(probability/3) #S(x) = 1/[1 + exp(-x/3)]
         else:
-            raise Exception('\nInvalid transfer function.\nValid values include:\nsigmoid\nsigmoid-2x\nsigmoid-x/2\nsigmoid-x/3')
+            raise Exception('\nInvalid transfer function. Valid values include:\n\'sigmoid\'\n\'sigmoid-2x\'\n\'sigmoid-x/2\'\n\'sigmoid-x/3\'')
 
     def determine_bit_vector(self,probability_vector):
         return [(rng.uniform(0,1) < self.transfer(probability)) for probability in probability_vector]
