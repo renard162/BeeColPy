@@ -50,6 +50,8 @@ abc_obj.fit()
 #Get solution after execute fit() without execute it again:
 solution = abc_obj.get_solution()
 
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
+
 """
 Parameters
 ----------
@@ -94,8 +96,8 @@ boundaries : List of Tuples
 	initialization or during scout events. This option usually helps the
 	algorithm stability because, in rare cases, NaN values can lock the
 	algorithm in a infinite loop.
-	Obs.: NaN protection can lock algorithm in infinite loop if the function has
-			too many values of domain returning NaN.
+    Obs.: NaN protection can drastically increases calculation time if
+	      analysed function has too many values of domain returning NaN.
 
 
 Methods
@@ -112,7 +114,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 
@@ -140,6 +142,8 @@ bin_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
 solution = bin_abc_obj.get_solution()
+
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
 
 """
 Parameters
@@ -209,8 +213,8 @@ Obs.: If boundaries are set, then it's take the priority over the bits_count.
 [nan_protection] : Int --optional-- (default: 4)
 	If greater than 0, if the cost function returns NaN, the algorithm tries to
 	recalculate the cost function up to "nan_protection" times.
-	Obs.: NaN protection can lock algorithm in infinite loop if the function has
-			too many values of domain returning NaN.
+    Obs.: NaN protection can drastically increases calculation time if
+	      analysed function has too many values of domain returning NaN.
 
 
 Methods
@@ -225,7 +229,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 
@@ -253,6 +257,8 @@ am_abc_obj.fit()
 
 #Get solution after execute fit() without execute it again:
 solution = am_abc_obj.get_solution()
+
+Obs.: It's possible to execute "fit()" method multiple times to improve results.
 
 """
 Parameters
@@ -308,8 +314,8 @@ Obs.: If boundaries are set, then it's take the priority over the bits_count.
 	initialization or during scout events. This option usually helps the
 	algorithm stability because, in rare cases, NaN values can lock the
 	algorithm in a infinite loop.
-	Obs.: NaN protection can lock algorithm in infinite loop if the function has
-			too many values of domain returning NaN.
+    Obs.: NaN protection can drastically increases calculation time if
+	      analysed function has too many values of domain returning NaN.
 
 
 Methods
@@ -324,7 +330,7 @@ get_solution()
 
 get_status()
 	Returns a tuple with:
-		- Number of iterations executed
+		- Number of complete iterations executed
 		- Number of scout events during iterations
 		- Number of times that NaN protection was activated
 
