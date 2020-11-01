@@ -53,7 +53,7 @@
 import numpy as np
 import random as rng
 import warnings as wrn
-from scipy import special as sps #Only used in binary ABC form
+# from scipy import special as sps #Only used in binary ABC form
 
 class abc:
     """
@@ -586,15 +586,18 @@ class _BinABCUtils:
     def __init__(self, babc):
         self.babc = babc
 
+    def sigmoid(self,x):
+        return 1/(1 + np.exp((-1)*x))
+
     def transfer(self,probability): #Transfer functions discussion in [6]
         if (self.babc.transfer_function == 'sigmoid'):
-            return sps.expit(probability)   #S(x) = 1/[1 + exp(-x)]
+            return self.sigmoid(probability)   #S(x) = 1/[1 + exp(-x)]
         elif (self.babc.transfer_function == 'sigmoid-2x'):
-            return sps.expit(probability*2) #S(x) = 1/[1 + exp(-2*x)]
+            return self.sigmoid(probability*2) #S(x) = 1/[1 + exp(-2*x)]
         elif (self.babc.transfer_function == 'sigmoid-x/2'):
-            return sps.expit(probability/2) #S(x) = 1/[1 + exp(-x/2)]
+            return self.sigmoid(probability/2) #S(x) = 1/[1 + exp(-x/2)]
         elif (self.babc.transfer_function == 'sigmoid-x/3'):
-            return sps.expit(probability/3) #S(x) = 1/[1 + exp(-x/3)]
+            return self.sigmoid(probability/3) #S(x) = 1/[1 + exp(-x/3)]
         else:
             raise Exception('\nInvalid transfer function. Valid values include:\n\'sigmoid\'\n\'sigmoid-2x\'\n\'sigmoid-x/2\'\n\'sigmoid-x/3\'')
 
