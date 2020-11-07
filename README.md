@@ -20,7 +20,6 @@ Website: https://github.com/renard162/BeeColPy/
 > - NumPy (>= 1.1.0)
 >
 > **BeeColPy do not support Python 2.7.**
-> BeeColPy needs Python 3.0 or newer.
 
 **User installation**
 
