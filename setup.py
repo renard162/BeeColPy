@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="beecolpy",
-    version="2.1",
+    version="2.2",
     license='MIT',
     author="Samuel Carlos Pessoa Oliveira",
     author_email="samuelcpoliveira@gmail.com",
@@ -21,6 +21,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy'],
     python_requires='>=3.0'
 )

@@ -37,15 +37,17 @@ base_abc_obj = abc(sphere, [(-10,10) for _ in range(2)],
                    iterations=10, min_max='min',
                    nan_protection=True)
 
-base_bin_abc_obj = binabc(squared_bin, bits_count=4,
+base_bin_abc_obj = bin_abc(squared_bin, bits_count=4,
                           transfer_function='sigmoid',
                           colony_size=10, scouts=0.5,
                           iterations=10, min_max='min',
+                          method='bin',
                           nan_protection=3)
 
-base_am_abc_obj = amabc(squared_bin, bits_count=4,
+base_am_abc_obj = bin_abc(squared_bin, bits_count=4,
                         colony_size=10, scouts=0.5,
                         iterations=10, min_max='min',
+                        method='am',
                         nan_protection=True)
 
 # %%
@@ -251,7 +253,7 @@ def test_am_food_source_generation():
     # Test algorithm initialization
     global base_am_abc_obj
     # return [food.position for food in base_am_abc_obj.am_abc_object.foods]
-    npt.assert_array_almost_equal([food.position for food in base_am_abc_obj.am_abc_object.foods],
+    npt.assert_array_almost_equal([food.position for food in base_am_abc_obj.bin_abc_object.foods],
                                   [[ 0.0317625700822956,  1.731335296907627, -1.563768616275585,  0.205068984362204],
                                    [ 0.8262456394675586,  0.189763645313695,  1.257867453165344,  0.161134427881295],
                                    [ 1.8553541838952037,  0.412742511845531,  0.350468256701745, -0.220043894897935],
