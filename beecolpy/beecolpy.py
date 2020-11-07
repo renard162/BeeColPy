@@ -60,6 +60,7 @@ class abc:
     or maximum of a function that's receive a vector of floats as input and
     returns a float as output.
 
+    https://en.wikipedia.org/wiki/Artificial_bee_colony_algorithm
 
     Parameters
     ----------

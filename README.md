@@ -6,6 +6,7 @@ algorithm, a method developed by Karaboga [1], a variant of classical
 particle swarm optimization.
 
 Website: https://github.com/renard162/BeeColPy/
+         https://en.wikipedia.org/wiki/Artificial_bee_colony_algorithm
 
 
 
