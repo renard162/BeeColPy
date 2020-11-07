@@ -5,7 +5,6 @@
 #   samuelcpoliveira@gmail.com
 #   Artificial Bee Colony Optimization
 #   This project is licensed under the MIT License.
-#   v1.0 (April 2020)
 #
 #------------------------------------------------------------------------------+
 #
@@ -13,39 +12,40 @@
 #
 # [1] Karaboga, D. and Basturk, B., 2007
 #     A powerful and efficient algorithm for numerical function optimization:
-#     artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471.
+#     artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471. 
 #     doi: https://doi.org/10.1007/s10898-007-9149-x
 # 
 # [2] Liu, T., Zhang, L. and Zhang, J., 2013
 #     Study of binary artificial bee colony algorithm based on particle swarm optimization.
-#     Journal of Computational Information Systems, 9(16), pp.6459-6466.
+#     Journal of Computational Information Systems, 9(16), pp.6459-6466. 
 #     link: https://api.semanticscholar.org/CorpusID:8789571
 #
 # [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
 #     A modified scout bee for artificial bee colony algorithm and its performance
 #     on optimization problems. Journal of King Saud University-Computer and Information
-#     Sciences, 28(4), pp.395-406.
+#     Sciences, 28(4), pp.395-406. 
 #     doi: https://doi.org/10.1016/j.jksuci.2016.03.001
 #
-# [4] Kennedy, J. and Eberhart, R.C., 1997, October. A discrete binary version
-#     of the particle swarm algorithm. In 1997 IEEE International conference on
-#     systems, man, and cybernetics. Computational cybernetics and simulation
-#     (Vol. 5, pp. 4104-4108). IEEE.
+# [4] Kennedy, J. and Eberhart, R.C., 1997
+#     A discrete binary version of the particle swarm algorithm. In 1997 IEEE International
+#     conference on systems, man, and cybernetics. Computational cybernetics and simulation
+#     (Vol. 5, pp. 4104-4108). IEEE. 
 #     doi: https://doi.org/10.1109/ICSMC.1997.637339
 #
-# [5] Pampará, G. and Engelbrecht, A.P., 2011, April. Binary artificial bee
-#     colony optimization. In 2011 IEEE Symposium on Swarm Intelligence
-#     (pp. 1-8). IEEE.
+# [5] Pampará, G. and Engelbrecht, A.P., 2011
+#     Binary artificial bee colony optimization. In 2011 IEEE Symposium on Swarm Intelligence 
+#     (pp. 1-8). IEEE. 
 #     doi: https://doi.org/10.1109/SIS.2011.5952562
 #
-# [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. and Salehi,
-#     S., 2011. A study of different transfer functions for binary version of
+# [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. and Salehi, S., 2011
+#     A study of different transfer functions for binary version of
 #     particle swarm optimization. In International Conference on Genetic and
-#     Evolutionary Methods (Vol. 1, No. 1, pp. 2-7).
+#     Evolutionary Methods (Vol. 1, No. 1, pp. 2-7). 
 #     link: http://hdl.handle.net/10072/48831
 #
-# [7] Huang, S.C., 2015. Polygonal approximation using an artificial bee colony
-#     algorithm. Mathematical Problems in Engineering, 2015.
+# [7] Huang, S.C., 2015
+#     Polygonal approximation using an artificial bee colony algorithm. Mathematical 
+#     Problems in Engineering, 2015. 
 #     doi: https://doi.org/10.1155/2015/375926
 #
 #------------------------------------------------------------------------------+
@@ -75,6 +75,7 @@ class abc:
         dimension of function domain.
         
         Obs.: The number of boundaries determines the dimension of function.
+
         Example: [(-5,5), (-20,20)]
 
     [colony_size] : Int --optional-- (default: 40)
@@ -87,11 +88,11 @@ class abc:
     [scouts] : Float --optional-- (default: 0.5)
         Determines the limit of tries for scout bee discard a food source and
         replace for a new one.
-        - If scouts = 0 : Scout_limit = colony_size * dimension
-        - If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
-            Obs.: scout = 0.5 is used in [3] as benchmark.
-        - If scout = (1 to iterations) : Scout_limit = scout
-        - If scout >= iterations: Scout event never occurs
+            - If scouts = 0 : Scout_limit = colony_size * dimension
+            - If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
+                Obs.: scout = 0.5 is used in [3] as benchmark.
+            - If scout = (1 to iterations) : Scout_limit = scout
+            - If scout >= iterations: Scout event never occurs
         
         Obs.: Scout_limit is rounded down in all cases.
 
@@ -100,8 +101,8 @@ class abc:
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
-        - If min_max = 'min' : Try to localize the minimum of function.
-        - If min_max = 'max' : Try to localize the maximum of function.
+            - If min_max = 'min' : Try to localize the minimum of function.
+            - If min_max = 'max' : Try to localize the maximum of function.
 
     [nan_protection] : Boolean --optional-- (default: True)
         If true, re-generate food sources that get NaN value as cost during
@@ -110,19 +111,21 @@ class abc:
         algorithm in a infinite loop.
         
         Obs.: NaN protection can drastically increases calculation time if
-              analysed function has too many values of domain returning NaN.
+        analysed function has too many values of domain returning NaN.
 
 
     Methods
     ----------
     fit()
         Execute the algorithm with defined parameters.
+
         Obs.: Returns a list with values found as minimum/maximum coordinate.
 
     get_solution()
         Returns the value obtained after fit() the method.
+
         Obs.: If fit() is not executed, return the position of
-              best initial condition.
+        best initial condition.
 
     get_status()
         Returns a tuple with:
@@ -139,18 +142,18 @@ class abc:
     ----------
      [1] Karaboga, D. and Basturk, B., 2007
          A powerful and efficient algorithm for numerical function optimization:
-         artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471.
+         artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471. 
          doi: https://doi.org/10.1007/s10898-007-9149-x
      
      [2] Liu, T., Zhang, L. and Zhang, J., 2013
          Study of binary artificial bee colony algorithm based on particle swarm optimization.
-         Journal of Computational Information Systems, 9(16), pp.6459-6466.
+         Journal of Computational Information Systems, 9(16), pp.6459-6466. 
          link: https://api.semanticscholar.org/CorpusID:8789571
     
      [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
          A modified scout bee for artificial bee colony algorithm and its performance
          on optimization problems. Journal of King Saud University-Computer and Information
-         Sciences, 28(4), pp.395-406.
+         Sciences, 28(4), pp.395-406. 
          doi: https://doi.org/10.1016/j.jksuci.2016.03.001
 
     """
@@ -195,8 +198,8 @@ class abc:
 
         self.foods = []
         for i in range(self.employed_onlookers_count):
-            self.foods.append(_FoodSource(self,_ABCUtils(self)))
-            _ABCUtils(self).nan_protection(i)
+            self.foods.append(_FoodSource(self,_ABC_utils(self)))
+            _ABC_utils(self).nan_protection(i)
 
         try:
             self.best_food_source = self.foods[np.nanargmax([food.fit for food in self.foods])]
@@ -215,10 +218,10 @@ class abc:
         for iteration in range(1,self.max_iterations+1):
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
-            [_ABCUtils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
+            [_ABC_utils(self).food_source_dance(i) for i in range(self.employed_onlookers_count)]
             max_fit = np.nanmax([food.fit for food in self.foods])
-            onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
-            _ABCUtils(self).nan_lock_check()
+            onlooker_probability = [_ABC_utils(self).prob_i(food.fit, max_fit) for food in self.foods]
+            _ABC_utils(self).nan_lock_check()
     
             #--> Onlooker bee phase <--
             #Based in probability, generate a neighbor point and evaluate again some food sources
@@ -228,12 +231,12 @@ class abc:
             while (p < self.employed_onlookers_count):
                 if (rng.uniform(0,1) <= onlooker_probability[i]):
                     p += 1
-                    _ABCUtils(self).food_source_dance(i)
+                    _ABC_utils(self).food_source_dance(i)
                     max_fit = np.nanmax([food.fit for food in self.foods])
                     if (self.foods[i].fit != max_fit):
-                        onlooker_probability[i] = _ABCUtils(self).prob_i(self.foods[i].fit, max_fit)
+                        onlooker_probability[i] = _ABC_utils(self).prob_i(self.foods[i].fit, max_fit)
                     else:
-                        onlooker_probability = [_ABCUtils(self).prob_i(food.fit, max_fit) for food in self.foods]
+                        onlooker_probability = [_ABC_utils(self).prob_i(food.fit, max_fit) for food in self.foods]
                 i = (i+1) if (i < (self.employed_onlookers_count-1)) else 0
 
             #--> Memorize best solution <--
@@ -249,8 +252,8 @@ class abc:
                 trial_counters = np.where(np.array(trial_counters) == max(trial_counters))[0].tolist()
                 i = trial_counters[rng.randrange(0,len(trial_counters))]
                 
-                self.foods[i] = _FoodSource(self,_ABCUtils(self)) #Replace food source
-                _ABCUtils(self).nan_protection(i)
+                self.foods[i] = _FoodSource(self,_ABC_utils(self)) #Replace food source
+                _ABC_utils(self).nan_protection(i)
                 self.scout_status += 1
             
             self.agents.append([food.position for food in self.foods])
@@ -285,29 +288,34 @@ class bin_abc:
     ----------
     function : Name
         A name of a function to minimize/maximize.
+
         Example: if the function is:
             def my_func(x): return x[0] or (x[1] and x[2])
             
             Put "my_func" as parameter.
 
     -=x=-
+
     bits_count : Int
         The number of bits that compose the output vector.
 
     boundaries : List of Tuples
         A list of tuples containing the lower and upper boundaries that will be
         applied over sigmoid function to determine the probability to bit become 1.
+
         Example: [(-5,5), (-20,20)]
     
     Obs.: - If boundaries are set, then it's take the priority over the bits_count.
+
           - If boundaries are not set, then the boundaries became (-2,2) to each bit
-          in AMABC method or (-10,10) to each bit in BABC method.
+            in AMABC method or (-10,10) to each bit in BABC method.
+    
     -=x=-
 
     [method] : String --optional-- (default: 'am')
-        Select the apllied solver:
-        - If method = 'am' : Applied Angle Modulated ABC (AMABC).
-        - If method = 'bin' : Applied Angle Modulated ABC (BABC).
+        Select the applied solver:
+            - If method = 'am' : Applied Angle Modulated ABC (AMABC).
+            - If method = 'bin' : Applied Angle Modulated ABC (BABC).
 
     [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
@@ -319,25 +327,25 @@ class bin_abc:
     [scouts] : Float --optional-- (default: 0.5)
         Determines the limit of tries for scout bee discard a food source and
         replace for a new one.
-        - If scouts = 0 : Scout_limit = colony_size * dimension
-        - If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
-            Obs.: scout = 0.5 is used in [3] as benchmark.
-        - If scout = (1 to iterations) : Scout_limit = scout
-        - If scout >= iterations: Scout event never occurs
+            - If scouts = 0 : Scout_limit = colony_size * dimension
+            - If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
+                Obs.: scout = 0.5 is used in [3] as benchmark.
+            - If scout = (1 to iterations) : Scout_limit = scout
+            - If scout >= iterations: Scout event never occurs
         
         Obs.1: Scout_limit is rounded down in all cases.
         
         Obs.2: In Binary form, the scouts tends to be more relevant than in
-               continuous form. If your problem are badly solved, try to reduce
-               the scouts value.
+        continuous form. If your problem are badly solved, try to reduce
+        the scouts value.
 
     [iterations] : Int --optional-- (default: 50)
         The number of iterations executed by algorithm.
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
-        - If min_max = 'min' : Try to localize the minimum of function.
-        - If min_max = 'max' : Try to localize the maximum of function.
+            - If min_max = 'min' : Try to localize the minimum of function.
+            - If min_max = 'max' : Try to localize the maximum of function.
 
     [nan_protection] : Boolean or Int --optional-- (default (boolean): True)
         With "method='am'", this variable are used as a boolean.
@@ -351,35 +359,37 @@ class bin_abc:
         values can lock the algorithm in a infinite loop.
         
         Obs.: NaN protection can drastically increases calculation time if
-              analysed function has too many values of domain returning NaN.
+        analysed function has too many values of domain returning NaN.
               
     [transfer_function] : String --optional-- (default: 'sigmoid')    
         Only used with "method='bin'". Defines the transfer function used to
         calculate the probability for each bit becomes '1'.
         
         The possibilities are explained on article [6]:
-        - If transfer_function = 'sigmoid' : S(x) = 1/[1 + exp(-x)]
-        - If transfer_function = 'sigmoid-2x' : S(x) = 1/[1 + exp(-2*x)]
-        - If transfer_function = 'sigmoid-x/2' : S(x) = 1/[1 + exp(-x/2)]
-        - If transfer_function = 'sigmoid-x/3' : S(x) = 1/[1 + exp(-x/3)]
+            - If transfer_function = 'sigmoid' : S(x) = 1/[1 + exp(-x)]
+            - If transfer_function = 'sigmoid-2x' : S(x) = 1/[1 + exp(-2*x)]
+            - If transfer_function = 'sigmoid-x/2' : S(x) = 1/[1 + exp(-x/2)]
+            - If transfer_function = 'sigmoid-x/3' : S(x) = 1/[1 + exp(-x/3)]
         
     [best_model_iterations] : int --optional-- (default: iterations count)
         Only used with "method='bin'". Due stochastic aspect of Binary form of
         particle based metaheuristic, after execution of ABC, the cost function
         will be calculated "best_model_iterations" times and the "best" result
         will be returned.
-        - If best_model_iterations = 0 : Tries "iterations" times.
-        - If best_model_iterations = N : Tries "N" times.
+            - If best_model_iterations = 0 : Tries "iterations" times. (default)
+            - If best_model_iterations = N : Tries "N" times.
 
 
     Methods
     ----------
     fit()
         Execute the algorithm with defined parameters.
+
         Obs.: Returns a list with values found as minimum/maximum coordinate.
 
     get_solution()
         Returns the value obtained after fit() the method.
+
         Obs.: If fit() is not executed, return "None"
 
     get_status()
@@ -391,101 +401,104 @@ class bin_abc:
     get_agents()
         Returns a list with the position of each food source during
         each iteration.
+
+        Obs.: In binary form, this method returns the position of each food source after
+        transformation "binary -> continuous". I.e. returns the values applied on angle 
+        modulation function in AMABC or the values applied on transfer function in BABC.
         
 
     Bibliography
     ----------
      [1] Karaboga, D. and Basturk, B., 2007
          A powerful and efficient algorithm for numerical function optimization:
-         artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471.
+         artificial bee colony (ABC) algorithm. Journal of global optimization, 39(3), pp.459-471. 
          doi: https://doi.org/10.1007/s10898-007-9149-x
      
      [2] Liu, T., Zhang, L. and Zhang, J., 2013
          Study of binary artificial bee colony algorithm based on particle swarm optimization.
-         Journal of Computational Information Systems, 9(16), pp.6459-6466.
+         Journal of Computational Information Systems, 9(16), pp.6459-6466. 
          link: https://api.semanticscholar.org/CorpusID:8789571
     
      [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
          A modified scout bee for artificial bee colony algorithm and its performance
          on optimization problems. Journal of King Saud University-Computer and Information
-         Sciences, 28(4), pp.395-406.
+         Sciences, 28(4), pp.395-406. 
          doi: https://doi.org/10.1016/j.jksuci.2016.03.001
     
-     [4] Kennedy, J. and Eberhart, R.C., 1997, October. A discrete binary version
-         of the particle swarm algorithm. In 1997 IEEE International conference on
-         systems, man, and cybernetics. Computational cybernetics and simulation
-         (Vol. 5, pp. 4104-4108). IEEE.
+     [4] Kennedy, J. and Eberhart, R.C., 1997
+         A discrete binary version of the particle swarm algorithm. In 1997 IEEE International
+         conference on systems, man, and cybernetics. Computational cybernetics and simulation
+         (Vol. 5, pp. 4104-4108). IEEE. 
          doi: https://doi.org/10.1109/ICSMC.1997.637339
     
-     [5] Pampará, G. and Engelbrecht, A.P., 2011, April. Binary artificial bee
-         colony optimization. In 2011 IEEE Symposium on Swarm Intelligence
-         (pp. 1-8). IEEE.
+     [5] Pampará, G. and Engelbrecht, A.P., 2011
+         Binary artificial bee colony optimization. In 2011 IEEE Symposium on Swarm Intelligence 
+         (pp. 1-8). IEEE. 
          doi: https://doi.org/10.1109/SIS.2011.5952562
     
-     [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. and Salehi,
-         S., 2011. A study of different transfer functions for binary version of
+     [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. and Salehi, S., 2011
+         A study of different transfer functions for binary version of
          particle swarm optimization. In International Conference on Genetic and
-         Evolutionary Methods (Vol. 1, No. 1, pp. 2-7).
+         Evolutionary Methods (Vol. 1, No. 1, pp. 2-7). 
          link: http://hdl.handle.net/10072/48831
     
-     [7] Huang, S.C., 2015. Polygonal approximation using an artificial bee colony
-         algorithm. Mathematical Problems in Engineering, 2015.
+     [7] Huang, S.C., 2015
+         Polygonal approximation using an artificial bee colony algorithm. Mathematical 
+         Problems in Engineering, 2015. 
          doi: https://doi.org/10.1155/2015/375926
 
     """
     def __init__(self,
-                  function,
-                  bits_count: int=0,
-                  boundaries: list=[],
-                  colony_size: int=40,
-                  scouts: float=0.5,
-                  iterations: int=50,
-                  min_max: str='min',
-                  method: str='am',
-                  nan_protection: bool=True,
-                  transfer_function: str='sigmoid',
-                  best_model_iterations: int=0):
+                 function,
+                 bits_count: int=0,
+                 boundaries: list=[],
+                 colony_size: int=40,
+                 scouts: float=0.5,
+                 iterations: int=50,
+                 min_max: str='min',
+                 method: str='am',
+                 nan_protection: bool=True,
+                 transfer_function: str='sigmoid',
+                 best_model_iterations: int=0):
         
-        if (method=='am'):
+        if (method == 'am'):
             self.method = 0
-        elif (method=='bin'):
+        elif (method == 'bin'):
             self.method = 1
         else:
             raise Exception('\nInvalid method. Valid values include:\n\'am\'\n\'bin\'')
         
         self.function = function
+        self._nan_protection = (nan_protection > 0)
         
         #Method selector
-        if (self.method==0): #Angle Modulated
+        if (self.method == 0): #Angle Modulated
             boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
-            self.bin_abc_object = abc(_AMABCUtils(self).iteration_cost_function, boundaries,
+            self.bin_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=nan_protection)
+                                  min_max=min_max, nan_protection=self._nan_protection)
             
-        elif (self.method==1): #Binary ABC
+        elif (self.method == 1): #Binary ABC
             self.transfer_function = transfer_function
             self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
             self.min_max_selector = min_max
             
-            self.nan_protection = (nan_protection > 0)
-            self.nan_count = 3 if ((type(nan_protection)==bool) and (self.nan_protection)) \
-                            else int(nan_protection - 1)
+            self._nan_count = 2 if ((type(nan_protection)==bool) and (self._nan_protection)) \
+                            else int(max([(nan_protection - 1), 0]))
             
             boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
-            self.bin_abc_object = abc(_BinABCUtils(self).iteration_cost_function, boundaries,
+            self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=self.nan_protection)
-        
+                                  min_max=min_max, nan_protection=self._nan_protection)
         
         self.result_bit_vector = None
 
-
     def fit(self):
         self.bin_abc_object.fit()
-        if (self.method==0): #Angle Modulated
-            self.result_bit_vector = _AMABCUtils(self).determine_bit_vector(self.bin_abc_object.get_solution())
-        elif (self.method==1): #Binary ABC
-            self.result_bit_vector = _BinABCUtils(self).get_best_solution(self.bin_abc_object.get_solution())
+        if (self.method == 0): #Angle Modulated
+            self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(self.bin_abc_object.get_solution())
+        elif (self.method == 1): #Binary ABC
+            self.result_bit_vector = _BABC_engine(self).get_best_solution(self.bin_abc_object.get_solution())
         return self.result_bit_vector
 
     def get_agents(self):
@@ -503,103 +516,11 @@ class binabc:
     """
     DEPRECATION WARNING:
         This function will be removed in next versions. Use "bin_abc" with
-        "method='bin'" instead
+        "method='bin'" instead.
         
     Class that applies Binary Artificial Bee Colony (BABC [5], based in Binary PSO [4])
     algorithm to find minimum or maximum of a function that's receive the number of
     bits as input and returns a vector of bits as output.
-
-
-    Parameters
-    ----------
-    function : Name
-        A name of a function to minimize/maximize.
-        Example: if the function is:
-            def my_func(x): return x[0] or (x[1] and x[2])
-            Put "my_func" as parameter.
-
-    -=x=-
-    bits_count : Int
-        The number of bits that compose the output vector.
-
-    boundaries : List of Tuples
-        A list of tuples containing the lower and upper boundaries that will be
-        applied over sigmoid function to determine the probability to bit become 1.
-        Example: [(-5,5), (-20,20)]
-    
-    Obs.: If boundaries are set, then it's take the priority over the bits_count.
-          If boundaries are not set, then the boundaries became (-10,10) to each bit.
-    -=x=-
-
-    [transfer_function] : String --optional-- (default: 'sigmoid')
-        Defines the transfer function used to calculate the probability for each bit
-        becomes '1'.
-        The possibilities are explained on article [6]: http://hdl.handle.net/10072/48831
-        - If transfer_function = 'sigmoid' : S(x) = 1/[1 + exp(-x)]
-        - If transfer_function = 'sigmoid-2x' : S(x) = 1/[1 + exp(-2*x)]
-        - If transfer_function = 'sigmoid-x/2' : S(x) = 1/[1 + exp(-x/2)]
-        - If transfer_function = 'sigmoid-x/3' : S(x) = 1/[1 + exp(-x/3)]
-
-    [colony_size] : Int --optional-- (default: 40)
-        A value that determines the number of bees in algorithm. Half of this
-        amount determines the number of points analyzed (food sources).
-        According articles, half of this number determines the amount of
-        Employed bees and other half is Onlooker bees.
-
-    [scouts] : Float --optional-- (default: 0.5)
-        Determines the limit of tries for scout bee discard a food source and
-        replace for a new one.
-        If scouts = 0 : Scout_limit = colony_size * dimension
-        If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
-            Obs.: scout = 0.5 is used in [3] as benchmark.
-        If scout = (1 to iterations) : Scout_limit = scout
-        If scout >= iterations: Scout event never occurs
-        Obs.1: Scout_limit is rounded down in all cases.
-        Obs.2: In Binary form, the scouts tends to be more relevant than in
-               continuous form. If your problem are badly solved, try to reduce
-               the scouts value.
-
-    [iterations] : Int --optional-- (default: 50)
-        The number of iterations executed by algorithm.
-
-    [best_model_iterations] : int --optional-- (default:iterations count)
-        Due stochastic aspect of Binary form of particle based metaheuristic,
-        after execution of ABC, the cost function will be calculated
-        "best_model_iterations" times and the "best" result will be returned.
-        - If best_model_iterations = 0 : Tries "iterations" times.
-        - If best_model_iterations = N : Tries "N" times.
-
-    [min_max] : String --optional-- (default: 'min')
-        Determines if algorithm will minimize or maximize the function.
-        If min_max = 'min' : Try to localize the minimum of function.
-        If min_max = 'max' : Try to localize the maximum of function.
-
-    [nan_protection] : Int --optional-- (default: 4)
-        If greater than 0, if the cost function returns NaN, the algorithm tries to
-        recalculate the cost function up to "nan_protection" times.
-        Obs.: NaN protection can drastically increases calculation time if
-              analysed function has too many values of domain returning NaN.
-
-
-    Methods
-    ----------
-    fit()
-        Execute the algorithm with defined parameters.
-        Obs.: Returns a list with values found as minimum/maximum coordinate.
-
-    get_solution()
-        Returns the value obtained after fit() the method.
-        Obs.: If fit() is not executed, return "None"
-
-    get_status()
-        Returns a tuple with:
-            - Number of complete iterations executed
-            - Number of scout events during iterations
-            - Number of times that NaN protection was activated
-
-    get_agents()
-        Returns a list with the position of each food source during
-        each iteration.
 
     """
     def __init__(self,
@@ -623,27 +544,39 @@ class binabc:
         self.transfer_function = transfer_function
         self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
         self.min_max_selector = min_max
-        self.nan_protection = (nan_protection > 0)
-        self.nan_count = int(nan_protection - 1)
+        self._nan_protection = (nan_protection > 0)
+        self._nan_count = int(nan_protection - 1)
 
-        self.bin_abc_object = abc(_BinABCUtils(self).iteration_cost_function, boundaries,
+        self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=self.nan_protection)
+                                  min_max=min_max, nan_protection=self._nan_protection)
 
         self.result_bit_vector = None
 
     def fit(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'bin\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         self.bin_abc_object.fit()
-        self.result_bit_vector = _BinABCUtils(self).get_best_solution(self.bin_abc_object.get_solution())
+        self.result_bit_vector = _BABC_engine(self).get_best_solution(self.bin_abc_object.get_solution())
         return self.result_bit_vector
 
     def get_agents(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'bin\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.bin_abc_object.agents
 
     def get_solution(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'bin\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.result_bit_vector
 
     def get_status(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'bin\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.bin_abc_object.iteration_status, self.bin_abc_object.scout_status, self.bin_abc_object.nan_status
 
 
@@ -651,89 +584,12 @@ class binabc:
 class amabc:
     """
     DEPRECATION WARNING:
-        This function will be removed in next versions. Use "bin_abc" instead.
+        This function will be removed in next versions. Use "bin_abc" with
+        "method='am'" instead.
         
     Class that applies Angle Modulated Artificial Bee Colony (AMABC [5])
     algorithm to find minimum or maximum of a function that's receive the number of
     bits as input and returns a vector of bits as output.
-
-
-    Parameters
-    ----------
-    function : Name
-        A name of a function to minimize/maximize.
-        Example: if the function is:
-            def my_func(x): return x[0] or (x[1] and x[2])
-            Put "my_func" as parameter.
-
-    -=x=-
-    bits_count : Int
-        The number of bits that compose the output vector.
-
-    boundaries : List of Tuples
-        A list of tuples containing the lower and upper boundaries that will be
-        applied over sigmoid function to determine the probability to bit become 1.
-        Example: [(-5,5), (-20,20)]
-    
-    Obs.: If boundaries are set, then it's take the priority over the bits_count.
-          If boundaries are not set, then the boundaries became (-2,2) to each bit.
-    -=x=-
-
-    [colony_size] : Int --optional-- (default: 40)
-        A value that determines the number of bees in algorithm. Half of this
-        amount determines the number of points analyzed (food sources).
-        According articles, half of this number determines the amount of
-        Employed bees and other half is Onlooker bees.
-
-    [scouts] : Float --optional-- (default: 0.5)
-        Determines the limit of tries for scout bee discard a food source and
-        replace for a new one.
-        If scouts = 0 : Scout_limit = colony_size * dimension
-        If scouts = (0 to 1) : Scout_limit = colony_size * dimension * scouts
-            Obs.: scout = 0.5 is used in [3] as benchmark.
-        If scout = (1 to iterations) : Scout_limit = scout
-        If scout >= iterations: Scout event never occurs
-        Obs.1: Scout_limit is rounded down in all cases.
-        Obs.2: In Binary form, the scouts tends to be more relevant than in
-               continuous form. If your problem are badly solved, try to reduce
-               the scouts value.
-
-    [iterations] : Int --optional-- (default: 50)
-        The number of iterations executed by algorithm.
-
-    [min_max] : String --optional-- (default: 'min')
-        Determines if algorithm will minimize or maximize the function.
-        If min_max = 'min' : Try to localize the minimum of function.
-        If min_max = 'max' : Try to localize the maximum of function.
-
-    [nan_protection] : Boolean --optional-- (default: True)
-        If true, re-generate food sources that get NaN value as cost during
-        initialization or during scout events. This option usually helps the
-        algorithm stability because, in rare cases, NaN values can lock the
-        algorithm in a infinite loop.
-        Obs.: NaN protection can drastically increases calculation time if
-              analysed function has too many values of domain returning NaN.
-
-
-    Methods
-    ----------
-    fit()
-        Execute the algorithm with defined parameters.
-        Obs.: Returns a list with values found as minimum/maximum coordinate.
-
-    get_solution()
-        Returns the value obtained after fit() the method.
-        Obs.: If fit() is not executed, return "None"
-
-    get_status()
-        Returns a tuple with:
-            - Number of complete iterations executed
-            - Number of scout events during iterations
-            - Number of times that NaN protection was activated
-
-    get_agents()
-        Returns a list with the position of each food source during
-        each iteration.
 
     """
     def __init__(self,
@@ -753,24 +609,36 @@ class amabc:
         boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
         self.function = function
 
-        self.am_abc_object = abc(_AMABCUtils(self).iteration_cost_function, boundaries,
+        self.am_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
                                   min_max=min_max, nan_protection=nan_protection)
 
         self.result_bit_vector = None
 
     def fit(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'am\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         self.am_abc_object.fit()
-        self.result_bit_vector = _AMABCUtils(self).determine_bit_vector(self.am_abc_object.get_solution())
+        self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(self.am_abc_object.get_solution())
         return self.result_bit_vector
 
     def get_agents(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'am\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.am_abc_object.agents
 
     def get_solution(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'am\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.result_bit_vector
 
     def get_status(self):
+        warn_message = 'This object will be removed. ' \
+            'Use "bin_abc" with "method=\'am\'" instead.'
+        wrn.warn(warn_message, DeprecationWarning)
         return self.am_abc_object.iteration_status, self.am_abc_object.scout_status, self.am_abc_object.nan_status
 
 
@@ -779,8 +647,7 @@ class amabc:
 class _FoodSource:
 
     def __init__(self,abc,utils):
-        #When a food source is initialized, randomize a position inside boundaries and
-        #calculate the "fit"
+        #When a food source is initialized, randomize a position inside boundaries and calculate the "fit"
         self.abc = abc
         self.abcu = utils
         self.trial_counter = 0
@@ -812,7 +679,7 @@ class _FoodSource:
 
 
 
-class _ABCUtils:
+class _ABC_utils:
 
     def __init__(self,abc):
         self.abc = abc
@@ -820,7 +687,8 @@ class _ABCUtils:
     def nan_lock_check(self):
         if not(self.abc.nan_protection): #If NaN protection is anebled, there's no need to waste computational power checking NaN.
             if (sum([np.isnan(food.fit) for food in self.abc.foods]) >= len(self.abc.foods)):
-                raise Exception('All food sources\'s fit resulted in NaN and beecolpy got stuck in an infinite loop. Enable nan_protection to prevent this.')
+                raise Exception('All food sources\'s fit resulted in NaN and beecolpy got stuck in an infinite loop. ' \
+                    'Enable nan_protection to prevent this.')
 
     def nan_protection(self,food_index):
         while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
@@ -852,7 +720,7 @@ class _ABCUtils:
 
 
 
-class _BinABCUtils:
+class _BABC_engine:
 
     def __init__(self, babc):
         self.babc = babc
@@ -870,16 +738,17 @@ class _BinABCUtils:
         elif (self.babc.transfer_function == 'sigmoid-x/3'):
             return self.sigmoid(probability/3) #S(x) = 1/[1 + exp(-x/3)]
         else:
-            raise Exception('\nInvalid transfer function. Valid values include:\n\'sigmoid\'\n\'sigmoid-2x\'\n\'sigmoid-x/2\'\n\'sigmoid-x/3\'')
+            raise Exception('\nInvalid transfer function. Valid values include:' \
+                '\n\'sigmoid\'\n\'sigmoid-2x\'\n\'sigmoid-x/2\'\n\'sigmoid-x/3\'')
 
     def determine_bit_vector(self,probability_vector):
         return [(rng.uniform(0,1) < self.transfer(probability)) for probability in probability_vector]
 
     def iteration_cost_function(self,probability_vector):
         cost = self.babc.function(self.determine_bit_vector(probability_vector))
-        if self.babc.nan_protection:
+        if self.babc._nan_protection:
             i = 0
-            while (np.isnan(cost) and (i < self.babc.nan_count)):
+            while (np.isnan(cost) and (i < self.babc._nan_count)):
                 cost = self.babc.function(self.determine_bit_vector(probability_vector))
                 i += 1
         return cost
@@ -888,9 +757,9 @@ class _BinABCUtils:
         for i in range(self.babc.best_model_iterations):
             temp_bit_vector = self.determine_bit_vector(probability_vector)
             temp_cost_value = self.babc.function(temp_bit_vector)
-            if self.babc.nan_protection:
+            if self.babc._nan_protection:
                 j = 0
-                while (np.isnan(temp_cost_value) and (j < self.babc.nan_count)):
+                while (np.isnan(temp_cost_value) and (j < self.babc._nan_count)):
                     temp_bit_vector = self.determine_bit_vector(probability_vector)
                     temp_cost_value = self.babc.function(temp_bit_vector)
                     j += 1
@@ -906,7 +775,7 @@ class _BinABCUtils:
 
 
 
-class _AMABCUtils:
+class _AMABC_engine:
 
     def __init__(self, amabc):
         self.amabc = amabc
