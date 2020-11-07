@@ -5,8 +5,9 @@ BeeColPy is a module for function optimization through artificial bee colony
 algorithm, a method developed by Karaboga [1], a variant of classical
 particle swarm optimization.
 
-Website: https://github.com/renard162/BeeColPy/
-         https://en.wikipedia.org/wiki/Artificial_bee_colony_algorithm
+Websites:
+Source code: https://github.com/renard162/BeeColPy/
+Introduction: https://en.wikipedia.org/wiki/Artificial_bee_colony_algorithm
 
 
 
