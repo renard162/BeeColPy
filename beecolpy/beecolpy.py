@@ -172,12 +172,12 @@ class abc:
         self.cost_function = function
         self.nan_protection = nan_protection
 
-        self.max_iterations = max([int(iterations), 1])
+        self.max_iterations = int(max([(iterations), 1]))
         if (iterations < 1):
             warn_message = 'Using the minimun value of iterations = 1'
             wrn.warn(warn_message, RuntimeWarning)
         
-        self.employed_onlookers_count = max([int(colony_size/2), 2])
+        self.employed_onlookers_count = int(max([(colony_size/2), 2]))
         if (colony_size < 4):
             warn_message = 'Using the minimun value of colony_size = 4'
             wrn.warn(warn_message, RuntimeWarning)
@@ -316,7 +316,7 @@ class bin_abc:
     [method] : String --optional-- (default: 'am')
         Select the applied solver:
             - If method = 'am' : Applied Angle Modulated ABC (AMABC).
-            - If method = 'bin' : Applied Angle Modulated ABC (BABC).
+            - If method = 'bin' : Applied Binary ABC (BABC).
 
     [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
@@ -391,7 +391,7 @@ class bin_abc:
     get_solution()
         Returns the value obtained after fit() the method.
 
-        Obs.: If fit() is not executed, return "None"
+        Obs.: If fit() is not executed, return "None".
 
     get_status()
         Returns a tuple with:
@@ -462,24 +462,18 @@ class bin_abc:
                  transfer_function: str='sigmoid',
                  best_model_iterations: int=0):
         
-        if (method == 'am'):
-            self.method = 0
-        elif (method == 'bin'):
-            self.method = 1
-        else:
-            raise Exception('\nInvalid method. Valid values include:\n\'am\'\n\'bin\'')
-        
+        self.method = method
         self.function = function
         self._nan_protection = (nan_protection > 0)
         
-        #Method selector
-        if (self.method == 0): #Angle Modulated
+        #Engine selector
+        if (self.method == 'am'): #Angle Modulated
             boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
             self.bin_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
                                   min_max=min_max, nan_protection=self._nan_protection)
             
-        elif (self.method == 1): #Binary ABC
+        elif (self.method == 'bin'): #Binary ABC
             self.transfer_function = transfer_function
             self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
             self.min_max_selector = min_max
@@ -491,14 +485,17 @@ class bin_abc:
             self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
                                   colony_size=colony_size, scouts=scouts, iterations=iterations,
                                   min_max=min_max, nan_protection=self._nan_protection)
+
+        else:
+            raise Exception('\nInvalid method. Valid values include:\n\'am\'\n\'bin\'')
         
         self.result_bit_vector = None
 
     def fit(self):
         self.bin_abc_object.fit()
-        if (self.method == 0): #Angle Modulated
+        if (self.method == 'am'): #Angle Modulated
             self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(self.bin_abc_object.get_solution())
-        elif (self.method == 1): #Binary ABC
+        elif (self.method == 'bin'): #Binary ABC
             self.result_bit_vector = _BABC_engine(self).get_best_solution(self.bin_abc_object.get_solution())
         return self.result_bit_vector
 
