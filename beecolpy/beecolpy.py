@@ -464,6 +464,10 @@ class bin_abc:
         
         self.method = method
         self.function = function
+        
+        if (nan_protection < 0):
+            warn_message = 'NaN protection disabled. Negative nan_protection griven.'
+            wrn.warn(warn_message, RuntimeWarning)
         self._nan_protection = (nan_protection > 0)
         
         #Engine selector
@@ -479,7 +483,7 @@ class bin_abc:
             self.min_max_selector = min_max
             
             self._nan_count = 2 if ((type(nan_protection)==bool) and (self._nan_protection)) \
-                            else int(max([(nan_protection - 1), 0]))
+                                else int(max([(nan_protection - 1), 0]))
             
             boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries)==0) else boundaries
             self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
