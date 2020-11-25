@@ -45,7 +45,7 @@ pip install beecolpy
 #Step-by-step:
 #Create object and set the solver parameters:
 abc_obj = abc(function, boundaries, colony_size=40, scouts=0.5,
-			 iterations=50, min_max='min', nan_protection=True)
+              iterations=50, min_max='min', nan_protection=True)
 
 #Execute algorithm: 
 abc_obj.fit()
@@ -194,7 +194,7 @@ solution = bin_abc_obj.get_solution()
     [method] : String --optional-- (default: 'am')
         Select the apllied solver:
             - If method = 'am' : Applied Angle Modulated ABC (AMABC).
-            - If method = 'bin' : Applied Angle Modulated ABC (BABC).
+            - If method = 'bin' : Applied Binary ABC (BABC).
 
     [colony_size] : Int --optional-- (default: 40)
         A value that determines the number of bees in algorithm. Half of this
