@@ -243,6 +243,12 @@ class abc:
 
     
     def fit(self):
+        '''
+        Execute the algorithm with defined parameters.
+
+        Obs.: Returns a list with values found as minimum/maximum 
+        coordinate.
+        '''
         self.agents = []
         self.agents.append([food.position for food in self.foods])
 
@@ -269,12 +275,28 @@ class abc:
         return self.best_food_source.position
 
     def get_agents(self):
+        '''
+        Returns a list with the position of each food source during
+        each iteration.
+        '''
         return self.agents
     
     def get_solution(self):
+        '''
+        Returns the value obtained after fit() the method.
+
+        Obs.: If fit() is not executed, return the position of
+        best initial condition.
+        '''
         return self.best_food_source.position
     
     def get_status(self):
+        '''
+        Returns a tuple with:
+            - Number of complete iterations executed
+            - Number of scout events during iterations
+            - Number of times that NaN protection was activated
+        '''
         return self.iteration_status, \
                self.scout_status, \
                self.nan_status
@@ -520,6 +542,10 @@ class bin_abc:
         self.method = method
         self.function = function
         
+        if ((len(boundaries) == 0) and (bits_count == 0)):
+            raise Exception('\nInvalid bit vector length. ' \
+                            '\'bits_count\' need to be greater than 0 or define \'boundaries\' list.')
+
         if (nan_protection < 0):
             warn_message = 'NaN protection disabled. Negative nan_protection given.'
             wrn.warn(warn_message, RuntimeWarning)
@@ -527,12 +553,12 @@ class bin_abc:
 
         self.result_bit_vector = None
         
-        #Engine selector
+        #Method selector
         if (self.method == 'am'): #Angle Modulated
             boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries) == 0) \
                                                              else boundaries
 
-            self.bin_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
+            self._bin_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
                                       colony_size = colony_size,
                                       scouts = scouts,
                                       iterations = iterations,
@@ -552,7 +578,7 @@ class bin_abc:
             boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries) == 0) \
                                                                else boundaries
 
-            self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
+            self._bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
                                       colony_size = colony_size,
                                       scouts = scouts,
                                       iterations = iterations,
@@ -564,27 +590,55 @@ class bin_abc:
         
 
     def fit(self):
-        self.bin_abc_object.fit()
+        '''
+        Execute the algorithm with defined parameters.
+
+        Obs.: Returns a list with values found as minimum/maximum 
+        coordinate.
+        '''
+        self._bin_abc_object.fit()
         if (self.method == 'am'): #Angle Modulated
-            self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(self.bin_abc_object.get_solution())
+            self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(
+                                                            self._bin_abc_object.get_solution())
         elif (self.method == 'bin'): #Binary ABC
-            self.result_bit_vector = _BABC_engine(self).get_best_solution(self.bin_abc_object.get_solution())
+            self.result_bit_vector = _BABC_engine(self).get_best_solution(
+                                                            self._bin_abc_object.get_solution())
         return self.result_bit_vector
 
     def get_agents(self):
-        return self.bin_abc_object.agents
+        '''
+        Returns a list with the position of each food source during
+        each iteration.
+
+        Obs.: In binary form, this method returns the position of 
+        each food source after transformation "binary -> continuous". 
+        I.e. returns the values applied on angle modulation function 
+        in AMABC or the values applied on transfer function in BABC.
+        '''
+        return self._bin_abc_object.agents
 
     def get_solution(self):
+        '''
+        Returns the value obtained after fit() the method.
+
+        Obs.: If fit() is not executed, return "None".
+        '''
         return self.result_bit_vector
 
     def get_status(self):
-        return self.bin_abc_object.iteration_status, \
-               self.bin_abc_object.scout_status, \
-               self.bin_abc_object.nan_status
+        '''
+        Returns a tuple with:
+            - Number of complete iterations executed
+            - Number of scout events during iterations
+            - Number of times that NaN protection was activated
+        '''
+        return self._bin_abc_object.iteration_status, \
+               self._bin_abc_object.scout_status, \
+               self._bin_abc_object.nan_status
 
 
 
-class binabc:
+class binabc(bin_abc):
     """
     DEPRECATION WARNING:
         This function will be removed in next versions. 
@@ -611,52 +665,23 @@ class binabc:
         warn_message = 'This object will be removed. ' \
             'Use "bin_abc" with "method=\'bin\'" instead.'
         wrn.warn(warn_message, DeprecationWarning)
-        
-        boundaries = [(-10,10) for _ in range(bits_count)] if (len(boundaries) == 0) else boundaries
-        self.function = function
-        self.transfer_function = transfer_function
-        self.best_model_iterations = iterations if (best_model_iterations<1) else best_model_iterations
-        self.min_max_selector = min_max
-        self._nan_protection = (nan_protection > 0)
-        self._nan_count = int(nan_protection - 1)
 
-        self.bin_abc_object = abc(_BABC_engine(self).iteration_cost_function, boundaries,
-                                  colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=self._nan_protection)
-
-        self.result_bit_vector = None
-
-    def fit(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'bin\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        self.bin_abc_object.fit()
-        self.result_bit_vector = _BABC_engine(self).get_best_solution(self.bin_abc_object.get_solution())
-        return self.result_bit_vector
-
-    def get_agents(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'bin\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.bin_abc_object.agents
-
-    def get_solution(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'bin\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.result_bit_vector
-
-    def get_status(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'bin\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.bin_abc_object.iteration_status, \
-               self.bin_abc_object.scout_status, \
-               self.bin_abc_object.nan_status
+        bin_abc.__init__(self,
+                         function = function,
+                         bits_count = bits_count,
+                         boundaries = boundaries,
+                         colony_size = colony_size,
+                         scouts = scouts,
+                         iterations = iterations,
+                         min_max = min_max,
+                         method = 'bin',
+                         nan_protection = nan_protection,
+                         transfer_function = transfer_function,
+                         best_model_iterations = best_model_iterations)
 
 
 
-class amabc:
+class amabc(bin_abc):
     """
     DEPRECATION WARNING:
         This function will be removed in next versions. 
@@ -682,57 +707,33 @@ class amabc:
             'Use "bin_abc" with "method=\'am\'" instead.'
         wrn.warn(warn_message, DeprecationWarning)
 
-        boundaries = [(-2,2) for _ in range(bits_count)] if (len(boundaries) == 0) else boundaries
-        self.function = function
-
-        self.am_abc_object = abc(_AMABC_engine(self).iteration_cost_function, boundaries,
-                                  colony_size=colony_size, scouts=scouts, iterations=iterations,
-                                  min_max=min_max, nan_protection=nan_protection)
-
-        self.result_bit_vector = None
-
-    def fit(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'am\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        self.am_abc_object.fit()
-        self.result_bit_vector = _AMABC_engine(self).determine_bit_vector(self.am_abc_object.get_solution())
-        return self.result_bit_vector
-
-    def get_agents(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'am\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.am_abc_object.agents
-
-    def get_solution(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'am\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.result_bit_vector
-
-    def get_status(self):
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'am\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-        return self.am_abc_object.iteration_status, \
-               self.am_abc_object.scout_status, \
-               self.am_abc_object.nan_status
+        bin_abc.__init__(self,
+                         function = function,
+                         bits_count = bits_count,
+                         boundaries = boundaries,
+                         colony_size = colony_size,
+                         scouts = scouts,
+                         iterations = iterations,
+                         min_max = min_max,
+                         method = 'am',
+                         nan_protection = nan_protection,
+                         transfer_function = 'sigmoid',
+                         best_model_iterations = 0)
 
 
 
 
 class _FoodSource:
 
-    def __init__(self,abc,utils):
+    def __init__(self, abc, engine):
         #When a food source is initialized, randomize a position inside boundaries and calculate the "fit"
         self.abc = abc
-        self.abcu = utils
+        self.engine = engine
         self.trial_counter = 0
         self.position = [rng.uniform(*self.abc.boundaries[i]) for i in range(len(self.abc.boundaries))]
-        self.fit = self.abcu.calculate_fit(self.position)
+        self.fit = self.engine.calculate_fit(self.position)
         
-    def evaluate_neighbor(self,partner_position):
+    def evaluate_neighbor(self, partner_position):
         #Randomize one coodinate (one dimension) to generate a neighbor point
         j = rng.randrange(0,len(self.abc.boundaries))
         
@@ -745,7 +746,7 @@ class _FoodSource:
         
         #Changes the coordinate "j" from food source to new "x_j" generating the neighbor point
         neighbor_position = [(self.position[i] if (i != j) else xj_new) for i in range(len(self.abc.boundaries))]
-        neighbor_fit = self.abcu.calculate_fit(neighbor_position)
+        neighbor_fit = self.engine.calculate_fit(neighbor_position)
 
         #Greedy selection
         if (neighbor_fit > self.fit):
@@ -759,7 +760,7 @@ class _FoodSource:
 
 class _ABC_engine:
 
-    def __init__(self,abc):
+    def __init__(self, abc):
         self.abc = abc
 
     def nan_lock_check(self):
@@ -768,18 +769,18 @@ class _ABC_engine:
                 raise Exception('All food sources\'s fit resulted in NaN and beecolpy got ' \
                                 'stuck in an infinite loop. Enable nan_protection to prevent this.')
 
-    def nan_protection(self,food_index):
+    def nan_protection(self, food_index):
         while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
             self.abc.nan_status += 1
             self.abc.foods[food_index] = _FoodSource(self.abc,self)
 
-    def prob_i(self,actual_fit,max_fit):
+    def prob_i(self, actual_fit,max_fit):
         # Improved probability function [7]
         return 0.9*(actual_fit/max_fit) + 0.1
         # Original probability function [1]
         # return actual_fit/np.sum([food.fit for food in self.abc.foods])
 
-    def calculate_fit(self,evaluated_position):
+    def calculate_fit(self, evaluated_position):
         #eq. (2) [2] (Convert "cost function" to "fit function")
         cost = self.abc.cost_function(evaluated_position)
         if (self.abc.min_max_selector == 'min'): #Minimize function
@@ -788,7 +789,7 @@ class _ABC_engine:
             fit_value = (1 + cost) if (cost > 0) else (1/(1 + np.abs(cost)))
         return fit_value
     
-    def food_source_dance(self,index):
+    def food_source_dance(self, index):
         #Generate a partner food source to generate a neighbor point to evaluate
         while True: #Criterion from [1] geting another food source at random
             d = int(rng.randrange(0,self.abc.employed_onlookers_count))
@@ -828,7 +829,6 @@ class _ABC_engine:
             #Take the index of replaced food source
             trial_counters = np.where(np.array(trial_counters) == max(trial_counters))[0].tolist()
             i = trial_counters[rng.randrange(0,len(trial_counters))]
-            
             self.abc.foods[i] = _FoodSource(self.abc,self) #Replace food source
             self.nan_protection(i)
             self.abc.scout_status += 1
@@ -846,10 +846,10 @@ class _BABC_engine:
     def __init__(self, babc):
         self.babc = babc
 
-    def sigmoid(self,x):
+    def sigmoid(self, x):
         return 1/(1 + np.exp((-1)*x))
 
-    def transfer(self,probability): #Transfer functions discused in [6]
+    def transfer(self, probability): #Transfer functions discused in [6]
         if (self.babc.transfer_function == 'sigmoid'):
             return self.sigmoid(probability)   #S(x) = 1/[1 + exp(-x)]
         elif (self.babc.transfer_function == 'sigmoid-2x'):
@@ -862,10 +862,10 @@ class _BABC_engine:
             raise Exception('\nInvalid transfer function. Valid values include:' \
                 '\n\'sigmoid\'\n\'sigmoid-2x\'\n\'sigmoid-x/2\'\n\'sigmoid-x/3\'')
 
-    def determine_bit_vector(self,probability_vector):
+    def determine_bit_vector(self, probability_vector):
         return [(rng.uniform(0,1) < self.transfer(probability)) for probability in probability_vector]
 
-    def iteration_cost_function(self,probability_vector):
+    def iteration_cost_function(self, probability_vector):
         cost = self.babc.function(self.determine_bit_vector(probability_vector))
         if self.babc._nan_protection:
             i = 0
@@ -874,7 +874,8 @@ class _BABC_engine:
                 i += 1
         return cost
 
-    def get_best_solution(self,probability_vector):
+    def get_best_solution(self, probability_vector):
+        cost_value = np.nan
         for i in range(self.babc.best_model_iterations):
             temp_bit_vector = self.determine_bit_vector(probability_vector)
             temp_cost_value = self.babc.function(temp_bit_vector)
@@ -901,15 +902,15 @@ class _AMABC_engine:
     def __init__(self, amabc):
         self.amabc = amabc
 
-    def angle_modulation(self,angle):
+    def angle_modulation(self, angle):
         # Equation (8) from [5] with constants:
         # g(x) = sin{2 * pi * (x-a) * b * cos[2 * pi * (x-a) * c]} + d
         # a=0 b=1 c=1 d=0
-        PI2 = 2*np.pi
+        PI2 = 2 * np.pi
         return np.sin(PI2 * angle * np.cos(PI2 * angle))
 
-    def determine_bit_vector(self,angle_vector):
+    def determine_bit_vector(self, angle_vector):
         return [(self.angle_modulation(angle) > 0) for angle in angle_vector]
 
-    def iteration_cost_function(self,angle_vector):
+    def iteration_cost_function(self, angle_vector):
         return self.amabc.function(self.determine_bit_vector(angle_vector))

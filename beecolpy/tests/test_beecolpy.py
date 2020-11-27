@@ -60,7 +60,8 @@ def test_food_source_generation():
                                    [ 0.2254944273721, -1.901317250991713],
                                    [ 5.6759717806954, -3.933745478421451],
                                    [-0.4680609169528,  1.667640789100623],
-                                   [-4.3632431120059,  5.116084083144479]], decimal=6)
+                                   [-4.3632431120059,  5.116084083144479]],
+                                   decimal=6)
 
 # %%
 def test_fit_solution():
@@ -71,7 +72,8 @@ def test_fit_solution():
     abc_obj.fit()
     # return abc_obj.get_solution()
     npt.assert_array_almost_equal(abc_obj.get_solution(),
-                                  [ 0.04921418749376193,  0.5454139496754725], decimal=6)
+                                  [ 0.04921418749376193,  0.5454139496754725],
+                                  decimal=6)
 
 # %%
 def test_get_agents():
@@ -136,7 +138,8 @@ def test_get_agents():
                                     [-1.2149964534247, -5.10475297516781],
                                     [-0.1464851678880,  0.21345813510979],
                                     [-0.4298854019016,  0.38963726112005],
-                                    [-0.1281716938908,  0.73965692056622]]], decimal=6)
+                                    [-0.1281716938908,  0.73965692056622]]],
+                                    decimal=6)
 
 # %%
 def test_get_status():
@@ -153,13 +156,14 @@ def test_get_status():
 def test_bin_food_source_generation():
     # Test algorithm initialization
     global base_bin_abc_obj
-    # return [food.position for food in base_bin_abc_obj.bin_abc_object.foods]
-    npt.assert_array_almost_equal([food.position for food in base_bin_abc_obj.bin_abc_object.foods],
+    # return [food.position for food in base_bin_abc_obj._bin_abc_object.foods]
+    npt.assert_array_almost_equal([food.position for food in base_bin_abc_obj._bin_abc_object.foods],
                                   [[ 2.36737993350663, -4.9898731727511,  8.194925119364804,  9.655709520753064],
                                    [ 7.97676575935987,  3.6796786383088, -0.557145690945732, -7.985975838632684],
                                    [-0.45980446894565,  7.3061985554328, -4.790153792160812,  6.100556540260445],
                                    [ 6.49689954296465,  3.3630640246370, -9.977143613711434, -0.128442670693507],
-                                   [-6.17865816995219,  1.3502148124134, -5.227681427695597,  9.350805005802869]], decimal=6)
+                                   [-6.17865816995219,  1.3502148124134, -5.227681427695597,  9.350805005802869]],
+                                   decimal=6)
 
 # %%
 def test_bin_fit_solution():
@@ -170,7 +174,8 @@ def test_bin_fit_solution():
     bin_abc_obj.fit()
     # return bin_abc_obj.get_solution()
     npt.assert_array_almost_equal(bin_abc_obj.get_solution(),
-                                  [True, False, False, False], decimal=0)
+                                  [True, False, False, False],
+                                  decimal=0)
 
 # %%
 def test_bin_get_agents():
@@ -235,7 +240,8 @@ def test_bin_get_agents():
                                     [-8.19692150306741,  4.8381040941882,  6.6605368838552, -0.94906961675102],
                                     [ 7.69359454104137, -7.9908523872518,  6.3124243256037,  5.34001481556772],
                                     [ 7.57702680055116, -4.6139155958262,  1.8267864179924, -7.63094783762329],
-                                    [-6.20907593483815,  3.5694131025996, -2.5242334328093,  9.44549387949469]]], decimal=6)
+                                    [-6.20907593483815,  3.5694131025996, -2.5242334328093,  9.44549387949469]]],
+                                    decimal=6)
 
 # %%
 def test_bin_get_status():
@@ -252,13 +258,14 @@ def test_bin_get_status():
 def test_am_food_source_generation():
     # Test algorithm initialization
     global base_am_abc_obj
-    # return [food.position for food in base_am_abc_obj.am_abc_object.foods]
-    npt.assert_array_almost_equal([food.position for food in base_am_abc_obj.bin_abc_object.foods],
+    # return [food.position for food in base_am_abc_obj._bin_abc_object.foods]
+    npt.assert_array_almost_equal([food.position for food in base_am_abc_obj._bin_abc_object.foods],
                                   [[ 0.0317625700822956,  1.731335296907627, -1.563768616275585,  0.205068984362204],
                                    [ 0.8262456394675586,  0.189763645313695,  1.257867453165344,  0.161134427881295],
                                    [ 1.8553541838952037,  0.412742511845531,  0.350468256701745, -0.220043894897935],
                                    [ 0.3851474463324251, -0.460395416109358,  0.302604056659554, -0.838681990388968],
-                                   [-1.2424346857825754, -1.253081886977779,  0.451092719474426,  0.626637555958515]], decimal=6)
+                                   [-1.2424346857825754, -1.253081886977779,  0.451092719474426,  0.626637555958515]],
+                                   decimal=6)
 
 # %%
 def test_am_fit_solution():
@@ -334,7 +341,8 @@ def test_am_get_agents():
                                     [-1.6779571289854807,  1.400283495619391,  0.465013092364492,  1.83867425358324],
                                     [-1.7058093473082554, -1.678283137344201, -0.758135673544020,  1.16633432508133],
                                     [-1.0732014266132368,  0.682929303799766,  0.724396029991348, -0.24461665235368],
-                                    [-1.1791190928582518,  1.123043984719443,  0.451092719474426,  0.62663755595851]]], decimal=6)
+                                    [-1.1791190928582518,  1.123043984719443,  0.451092719474426,  0.62663755595851]]],
+                                    decimal=6)
 
 # %%
 def test_am_get_status():
