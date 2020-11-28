@@ -31,24 +31,68 @@ def squared_bin(b): #Binary benchmark
     x = translate_bin(b)
     return mt.pow(x,3) - 15*mt.pow(x,2) + 47*(x) - 33
 
+def squared_bin_nan(b):
+    #y=(x-1)*(x-3)*(x-11)
+    #y = x^3 - 15 x^2 + 47 x - 33
+    #Min: x=0 b=[0000 0000] (Local)
+    #     x=8.055 b~[0000 1000] (Global)
+    x = translate_bin(b)
+    if (x > 128):
+        return np.nan
+    else:
+        return mt.pow(x,3) - 15*mt.pow(x,2) + 47*(x) - 33
+
 rng.seed(0)
-base_abc_obj = abc(sphere, [(-10,10) for _ in range(2)],
-                   colony_size=10, scouts=0.5,
-                   iterations=10, min_max='min',
+base_abc_obj = abc(sphere,
+                   [(-10,10) for _ in range(2)],
+                   colony_size=10,
+                   scouts=0.5,
+                   iterations=10,
+                   min_max='min',
                    nan_protection=True)
 
-base_bin_abc_obj = bin_abc(squared_bin, bits_count=4,
+base_bin_abc_obj = bin_abc(squared_bin,
+                           bits_count=4,
+                           transfer_function='sigmoid',
+                           colony_size=10,
+                           scouts=0.5,
+                           iterations=10,
+                           min_max='min',
+                           method='bin',
+                           result_format='best',
+                           nan_protection=3)
+
+base_am_abc_obj = bin_abc(squared_bin,
+                          bits_count=4,
+                          colony_size=10,
+                          scouts=0.5,
+                          iterations=10,
+                          min_max='min',
+                          method='am',
+                          nan_protection=True)
+
+average_nan_bin_abc_obj = bin_abc(squared_bin_nan,
+                                  bits_count=8,
+                                  transfer_function='sigmoid',
+                                  colony_size=10,
+                                  scouts=0.5,
+                                  iterations=10,
+                                  min_max='min',
+                                  method='bin',
+                                  result_format='average',
+                                  nan_protection=3)
+
+nan_bin_abc_obj = bin_abc(squared_bin_nan,
+                          bits_count=8,
                           transfer_function='sigmoid',
-                          colony_size=10, scouts=0.5,
-                          iterations=10, min_max='min',
+                          colony_size=60,
+                          scouts=10,
+                          iterations=30,
+                          min_max='min',
                           method='bin',
+                          result_format='average',
                           nan_protection=3)
 
-base_am_abc_obj = bin_abc(squared_bin, bits_count=4,
-                        colony_size=10, scouts=0.5,
-                        iterations=10, min_max='min',
-                        method='am',
-                        nan_protection=True)
 
 # %%
 def test_food_source_generation():
@@ -149,8 +193,7 @@ def test_get_status():
     rng.seed(3)
     abc_obj.fit()
     # return abc_obj.get_status()
-    npt.assert_array_almost_equal(abc_obj.get_status(),
-                                  (10, 1, 2), decimal=0)
+    npt.assert_array_equal(abc_obj.get_status(), (10, 1, 2))
 
 # %%
 def test_bin_food_source_generation():
@@ -166,16 +209,58 @@ def test_bin_food_source_generation():
                                    decimal=6)
 
 # %%
-def test_bin_fit_solution():
+def test_bin_fit_best_solution():
     # Test solver capability
     global base_bin_abc_obj
     bin_abc_obj = deepcopy(base_bin_abc_obj)
     rng.seed(1)
     bin_abc_obj.fit()
     # return bin_abc_obj.get_solution()
-    npt.assert_array_almost_equal(bin_abc_obj.get_solution(),
-                                  [True, False, False, False],
-                                  decimal=0)
+    npt.assert_array_equal(bin_abc_obj.get_solution(), 
+                           [True, False, False, False])
+
+# %%
+def test_bin_fit_average_solution():
+    # Test solver capability
+    global average_nan_bin_abc_obj
+    bin_abc_obj = deepcopy(average_nan_bin_abc_obj)
+    rng.seed(1)
+    bin_abc_obj.fit()
+    # return bin_abc_obj.get_solution()
+    npt.assert_array_equal(bin_abc_obj.get_solution(),
+                           [False, False, False, False, False, False, True, True])
+
+# %%
+def test_bin_fit_average_probability():
+    # Test solver capability
+    global average_nan_bin_abc_obj
+    bin_abc_obj = deepcopy(average_nan_bin_abc_obj)
+    rng.seed(2)
+    bin_abc_obj.fit()
+    # return bin_abc_obj.get_solution(probability_vector = True)
+    npt.assert_array_almost_equal(bin_abc_obj.get_solution(probability_vector = True),
+                                  [6.980620498661769e-05,
+                                   0.00212086280389309,
+                                   0.03516295233305826,
+                                   0.005422932887954891,
+                                   0.9397996202741649,
+                                   0.00025282181515631384,
+                                   0.0007069966454927339,
+                                   0.7962514541879765],
+                                   decimal=6)
+
+# %%
+def test_bin_nan_protection():
+    # Test NaN protection in BABC
+    global nan_bin_abc_obj
+    bin_abc_obj = deepcopy(nan_bin_abc_obj)
+    rng.seed(3)
+    bin_abc_obj.fit()
+    # return bin_abc_obj.get_status()
+    # return bin_abc_obj.get_solution(probability_vector = False)
+    npt.assert_array_equal(bin_abc_obj.get_status(), (30, 29, 35))
+    npt.assert_array_equal(bin_abc_obj.get_solution(), 
+                           [False, False, False, False, True, False, True, False])
 
 # %%
 def test_bin_get_agents():
@@ -251,8 +336,7 @@ def test_bin_get_status():
     rng.seed(3)
     bin_abc_obj.fit()
     # return bin_abc_obj.get_status()
-    npt.assert_array_almost_equal(bin_abc_obj.get_status(),
-                                  (10, 5, 0), decimal=0)
+    npt.assert_array_equal(bin_abc_obj.get_status(), (10, 5, 0))
 
 # %%
 def test_am_food_source_generation():
@@ -275,8 +359,8 @@ def test_am_fit_solution():
     rng.seed(1)
     am_abc_obj.fit()
     # return am_abc_obj.get_solution()
-    npt.assert_array_almost_equal(am_abc_obj.get_solution(),
-                                  [True, False, False, False], decimal=0)
+    npt.assert_array_equal(am_abc_obj.get_solution(),
+                           [True, False, False, False])
 
 # %%
 def test_am_get_agents():
@@ -352,7 +436,6 @@ def test_am_get_status():
     rng.seed(3)
     am_abc_obj.fit()
     # return am_abc_obj.get_status()
-    npt.assert_array_almost_equal(am_abc_obj.get_status(),
-                                  (10, 4, 0), decimal=0)
+    npt.assert_array_almost_equal(am_abc_obj.get_status(), (10, 4, 0))
 
 # %%
