@@ -986,8 +986,10 @@ class _BABC_engine:
     def bin_cost_function(self, value_vector):
         bit_vector = self.get_bit_vector(value_vector)
         cost_value = self.babc.function(bit_vector)
+
         if self.babc._nan_protection:
             _, cost_value = self.recalculate_nan(bit_vector, cost_value, value_vector)
+            
         return cost_value
 
 
@@ -1020,10 +1022,12 @@ class _BABC_engine:
 
         for i in range(self.babc.best_model_iterations):
             temp_bit_vector = self.get_bit_vector(value_vector)
+
             if self.babc._nan_protection:
                 temp_cost_value = self.babc.function(temp_bit_vector)
                 temp_bit_vector, _ = self.recalculate_nan(
                                         temp_bit_vector, temp_cost_value, value_vector)
+            
             solution_collection[i,:] = temp_bit_vector
 
         for j in range(len(self.babc.boundaries)):

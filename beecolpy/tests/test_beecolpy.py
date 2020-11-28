@@ -23,19 +23,12 @@ def sphere(x): #Continuous and NaN benchmark
 def translate_bin(b):
     return np.sum([(b[::-1][i])*mt.pow(2,i) for i in range(len(b))])
 
-def squared_bin(b): #Binary benchmark
+def squared_bin(b):
     #y=(x-1)*(x-3)*(x-11)
     #y = x^3 - 15 x^2 + 47 x - 33
     #Min: x=0 b=[0000 0000] (Local)
     #     x=8.055 b~[0000 1000] (Global)
-    x = translate_bin(b)
-    return mt.pow(x,3) - 15*mt.pow(x,2) + 47*(x) - 33
-
-def squared_bin_nan(b):
-    #y=(x-1)*(x-3)*(x-11)
-    #y = x^3 - 15 x^2 + 47 x - 33
-    #Min: x=0 b=[0000 0000] (Local)
-    #     x=8.055 b~[0000 1000] (Global)
+    #NaN: x>128 b>[0111 1111]
     x = translate_bin(b)
     if (x > 128):
         return np.nan
@@ -71,7 +64,7 @@ base_am_abc_obj = bin_abc(squared_bin,
                           method='am',
                           nan_protection=True)
 
-average_nan_bin_abc_obj = bin_abc(squared_bin_nan,
+average_nan_bin_abc_obj = bin_abc(squared_bin,
                                   bits_count=8,
                                   transfer_function='sigmoid',
                                   colony_size=10,
@@ -82,7 +75,7 @@ average_nan_bin_abc_obj = bin_abc(squared_bin_nan,
                                   result_format='average',
                                   nan_protection=3)
 
-nan_bin_abc_obj = bin_abc(squared_bin_nan,
+nan_bin_abc_obj = bin_abc(squared_bin,
                           bits_count=8,
                           transfer_function='sigmoid',
                           colony_size=60,
