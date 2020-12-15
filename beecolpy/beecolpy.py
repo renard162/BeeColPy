@@ -1,59 +1,60 @@
 '''
-#----------------------------------------------------------------------+
-#
-#   Samuel C P Oliveira
-#   samuelcpoliveira@gmail.com
-#   Artificial Bee Colony Optimization
-#   This project is licensed under the MIT License.
-#
-#----------------------------------------------------------------------+
-#
-# Bibliography
-#
-#    [1] Karaboga, D. and Basturk, B., 2007
-#        A powerful and efficient algorithm for numerical function 
-#        optimization: artificial bee colony (ABC) algorithm. Journal 
-#        of global optimization, 39(3), pp.459-471. 
-#        DOI: https://doi.org/10.1007/s10898-007-9149-x
-#
-#    [2] Liu, T., Zhang, L. and Zhang, J., 2013
-#        Study of binary artificial bee colony algorithm based on 
-#        particle swarm optimization. Journal of Computational 
-#        Information Systems, 9(16), pp.6459-6466. 
-#        Link: https://api.semanticscholar.org/CorpusID:8789571
-#
-#    [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
-#        A modified scout bee for artificial bee colony algorithm and 
-#        its performance on optimization problems. Journal of King Saud 
-#        University-Computer and Information Sciences, 28(4), 
-#        pp.395-406. 
-#        DOI: https://doi.org/10.1016/j.jksuci.2016.03.001
-#
-#    [4] Kennedy, J. and Eberhart, R.C., 1997
-#        A discrete binary version of the particle swarm algorithm. 
-#        In 1997 IEEE International conference on systems, man, and 
-#        cybernetics. Computational cybernetics and simulation 
-#        (Vol. 5, pp. 4104-4108). IEEE. 
-#        DOI: https://doi.org/10.1109/ICSMC.1997.637339
-#
-#    [5] Pampará, G. and Engelbrecht, A.P., 2011
-#        Binary artificial bee colony optimization. In 2011 IEEE 
-#        Symposium on Swarm Intelligence (pp. 1-8). IEEE. 
-#        DOI: https://doi.org/10.1109/SIS.2011.5952562
-#
-#    [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. 
-#    and Salehi, S., 2011
-#        A study of different transfer functions for binary version 
-#        of particle swarm optimization. In International Conference 
-#        on Genetic and Evolutionary Methods (Vol. 1, No. 1, pp. 2-7). 
-#        Link: http://hdl.handle.net/10072/48831
-#
-#    [7] Huang, S.C., 2015
-#        Polygonal approximation using an artificial bee colony 
-#        algorithm. Mathematical Problems in Engineering, 2015. 
-#        DOI: https://doi.org/10.1155/2015/375926
-#
-#----------------------------------------------------------------------+
++----------------------------------------------------------------------+
+ 
+   Samuel C P Oliveira
+   samuelcpoliveira@gmail.com
+   Artificial Bee Colony Optimization
+   This project is licensed under the MIT License.
+ 
++----------------------------------------------------------------------+
+ 
+ Bibliography
+ ------------
+ 
+    [1] Karaboga, D. and Basturk, B., 2007
+        A powerful and efficient algorithm for numerical function 
+        optimization: artificial bee colony (ABC) algorithm. Journal 
+        of global optimization, 39(3), pp.459-471. 
+        DOI: https://doi.org/10.1007/s10898-007-9149-x
+ 
+    [2] Liu, T., Zhang, L. and Zhang, J., 2013
+        Study of binary artificial bee colony algorithm based on 
+        particle swarm optimization. Journal of Computational 
+        Information Systems, 9(16), pp.6459-6466. 
+        Link: https://api.semanticscholar.org/CorpusID:8789571
+ 
+    [3] Anuar, S., Selamat, A. and Sallehuddin, R., 2016
+        A modified scout bee for artificial bee colony algorithm and 
+        its performance on optimization problems. Journal of King Saud 
+        University-Computer and Information Sciences, 28(4), 
+        pp.395-406. 
+        DOI: https://doi.org/10.1016/j.jksuci.2016.03.001
+ 
+    [4] Kennedy, J. and Eberhart, R.C., 1997
+        A discrete binary version of the particle swarm algorithm. 
+        In 1997 IEEE International conference on systems, man, and 
+        cybernetics. Computational cybernetics and simulation 
+        (Vol. 5, pp. 4104-4108). IEEE. 
+        DOI: https://doi.org/10.1109/ICSMC.1997.637339
+ 
+    [5] Pampará, G. and Engelbrecht, A.P., 2011
+        Binary artificial bee colony optimization. In 2011 IEEE 
+        Symposium on Swarm Intelligence (pp. 1-8). IEEE. 
+        DOI: https://doi.org/10.1109/SIS.2011.5952562
+ 
+    [6] Mirjalili, S., Hashim, S., Taherzadeh, G., Mirjalili, S.Z. 
+    and Salehi, S., 2011
+        A study of different transfer functions for binary version 
+        of particle swarm optimization. In International Conference 
+        on Genetic and Evolutionary Methods (Vol. 1, No. 1, pp. 2-7). 
+        Link: http://hdl.handle.net/10072/48831
+ 
+    [7] Huang, S.C., 2015
+        Polygonal approximation using an artificial bee colony 
+        algorithm. Mathematical Problems in Engineering, 2015. 
+        DOI: https://doi.org/10.1155/2015/375926
+ 
++----------------------------------------------------------------------+
 '''
 import numpy as np
 import random as rng
@@ -76,7 +77,7 @@ class abc:
         Example: if the function is:
             def my_func(x): return x[0]**2 + x[1]**2 + 5*x[1]
             
-            Put "my_func" as parameter.
+            Use "my_func" as parameter.
 
 
     boundaries : List of Tuples
@@ -86,7 +87,9 @@ class abc:
         Obs.: The number of boundaries determines the dimension of 
         function.
 
-        Example: [(-5,5), (-20,20)]
+        Example: A function F(x1, x2) = y with:
+            (-5 <= x1 <= 5) and (-20 <= x2 <= 20) have the boundaries:
+                [(-5,5), (-20,20)]
 
 
     [colony_size] : Int --optional-- (default: 40)
@@ -120,7 +123,7 @@ class abc:
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
-            - If min_max = 'min' : 
+            - If min_max = 'min' : (default)
                 Locate the minimum of function.
 
             - If min_max = 'max' : 
@@ -314,11 +317,21 @@ class bin_abc:
     the number of bits as input and returns a vector of bits as output.
     
     There two methods in this solver:
-        - Angle Modulated Artificial Bee Colony (AMABC [5]):
-            A deterministic based solver. (default)
+        - Angle Modulated Artificial Bee Colony (AMABC [5]): (default)
+            A deterministic based solver. Ideal to solve general 
+            problems represented by a bit list.
 
         - Binary Artificial Bee Colony (BABC [5], based in BPSO [4]):
-            A stochastic based solver.
+            A stochastic based solver. Ideal to solve problems 
+            represented by a bit list that have random elements 
+            applied to each iteration.
+                - To solve very noisy problems, using the default 
+                  result format ("best" result format) usually have 
+                  good results. 
+                  
+                - To solve problems with great random components 
+                  applied to each iteration, geting the most frequent 
+                  bit ("average" result format) will have good results.
 
 
     Parameters
@@ -329,10 +342,15 @@ class bin_abc:
         Example: if the function is:
             def my_func(x): return x[0] or (x[1] and x[2])
             
-            Put "my_func" as parameter.
+            Use "my_func" as parameter.
 
 
     -=x=--=x=--=x=--=x=--=x=-
+
+    Just one of these parameters are mandatory. If you don't know 
+    exactly how binary solvers work, just inform the number of bits 
+    (bits_count) and the default boundaries will be used. These 
+    boundaries usually are enough to solve most problems.
 
     bits_count : Int
         The number of bits that compose the output vector.
@@ -340,10 +358,12 @@ class bin_abc:
 
     boundaries : List of Tuples
         A list of tuples containing the lower and upper boundaries 
-        that will be applied over sigmoid function to determine the 
-        probability to bit become 1.
+        that will be applied over sigmoid or angle modulation function 
+        to determine the probability to bit become 1.
 
-        Example: [(-5,5), (-20,20)]
+        Example: A function F(b1, b2) = y with:
+            (-5 <= b1 <= 5) and (-20 <= b2 <= 20) have the boundaries:
+                [(-5,5), (-20,20)]
     
     Obs.:
         - If boundaries are set: 
@@ -358,7 +378,7 @@ class bin_abc:
 
     [method] : String --optional-- (default: 'am')
         Select the applied solver:
-            - If method = 'am' : 
+            - If method = 'am' : (default)
                 Applied Angle Modulated ABC (AMABC).
 
             - If method = 'bin' : 
@@ -400,7 +420,7 @@ class bin_abc:
 
     [min_max] : String --optional-- (default: 'min')
         Determines if algorithm will minimize or maximize the function.
-            - If min_max = 'min' : 
+            - If min_max = 'min' : (default)
                 Locate the minimum of function.
 
             - If min_max = 'max' : 
@@ -431,7 +451,7 @@ class bin_abc:
         used to calculate the probability for each bit becomes '1'.
         
         The possibilities are explained on article [6]:
-            - If transfer_function = 'sigmoid' : 
+            - If transfer_function = 'sigmoid' : (default)
                 S(x) = 1/(1 + exp(-x))
 
             - If transfer_function = 'sigmoid-2x' : 
@@ -444,7 +464,7 @@ class bin_abc:
                 S(x) = 1/(1 + exp(-x/3))
 
 
-    [result_format] : String --optional-- (default: 'average')
+    [result_format] : String --optional-- (default: 'best')
         Only used with "method='bin'". In a stochastic method, the 
         result vector are represented by a probability vector with
         the probability of each bit becomes "True". This property 
@@ -454,8 +474,11 @@ class bin_abc:
                 "best_model_iterations" simulations of the probability
                 vector. This approach is ideal to solve problems with
                 highly random elements.
+                    Obs.: To use this method efficiently, use high 
+                    values in "best_model_iterations". Usually values 
+                    greater than 100 have better results.
 
-            - If result_format = 'best' :
+            - If result_format = 'best' : (default)
                 Returns the best result after "best_model_iterations" 
                 simulations of the probability vector. This approach is 
                 useful to solve highly noisy problems.
@@ -581,7 +604,7 @@ class bin_abc:
                  method: str='am',
                  nan_protection: bool=True,
                  transfer_function: str='sigmoid',
-                 result_format: str='average',
+                 result_format: str='best',
                  best_model_iterations: int=0):
         
         self.method = method
@@ -720,8 +743,7 @@ class binabc(bin_abc):
     '''
     DEPRECATION WARNING:
         This function will be removed in next versions. 
-        Use "bin_abc" with "method='bin'" and "result_format='best'" 
-        instead.
+        Use "bin_abc" with "method='bin'" instead.
         
     Class that applies Binary Artificial Bee Colony (BABC [5], based 
     in Binary PSO [4]) algorithm to find minimum or maximum of a 
@@ -796,14 +818,13 @@ class amabc(bin_abc):
                          method = 'am',
                          nan_protection = nan_protection,
                          transfer_function = 'sigmoid',
-                         result_format = 'average',
+                         result_format = 'best',
                          best_model_iterations = 0)
 
 
 
 
 class _FoodSource:
-
     def __init__(self, abc, engine):
         #When a food source is initialized, randomize a position inside boundaries and calculate the "fit"
         self.abc = abc
@@ -838,8 +859,8 @@ class _FoodSource:
 
 
 
-class _ABC_engine:
 
+class _ABC_engine:
     def __init__(self, abc):
         self.abc = abc
 
@@ -855,6 +876,11 @@ class _ABC_engine:
         while (np.isnan(self.abc.foods[food_index].fit) and self.abc.nan_protection):
             self.abc.nan_status += 1
             self.abc.foods[food_index] = _FoodSource(self.abc, self)
+
+
+    def generate_food_source(self, index):
+        self.abc.foods[index] = _FoodSource(self.abc, self)
+        self.execute_nan_protection(index)
 
 
     def prob_i(self, actual_fit, max_fit):
@@ -883,23 +909,18 @@ class _ABC_engine:
         self.abc.foods[index].evaluate_neighbor(self.abc.foods[d].position)
 
 
-    def generate_food_source(self, index):
-        self.abc.foods[index] = _FoodSource(self.abc, self)
-        self.execute_nan_protection(index)
-
-
     def employer_bee_phase(self):
         #Generate and evaluate a neighbor point to every food source
-        for i in range(self.abc.employed_onlookers_count):
+        for i in range(len(self.abc.foods)):
             self.food_source_dance(i)
 
 
     def onlooker_bee_phase(self):
         #Based in probability, generate a neighbor point and evaluate again some food sources
         #Same food source can be evaluated multiple times
+        self.check_nan_lock()
         max_fit = np.nanmax([food.fit for food in self.abc.foods])
         onlooker_probability = [self.prob_i(food.fit, max_fit) for food in self.abc.foods]
-        self.check_nan_lock()
         p = 0 #Onlooker bee index
         i = 0 #Food source index
         while (p < self.abc.employed_onlookers_count):
@@ -912,7 +933,7 @@ class _ABC_engine:
                     onlooker_probability[i] = self.prob_i(self.abc.foods[i].fit, max_fit)
                 else:
                     onlooker_probability = [self.prob_i(food.fit, max_fit) for food in self.abc.foods]
-            i = (i+1) if (i < (self.abc.employed_onlookers_count-1)) else 0
+            i = (i+1) if (i < (len(self.abc.foods)-1)) else 0
 
 
     def scout_bee_phase(self):
@@ -935,7 +956,6 @@ class _ABC_engine:
 
 
 class _BABC_engine:
-
     def __init__(self, babc):
         self.babc = babc
 
@@ -1048,7 +1068,6 @@ class _BABC_engine:
 
 
 class _AMABC_engine:
-
     def __init__(self, amabc):
         self.amabc = amabc
 
