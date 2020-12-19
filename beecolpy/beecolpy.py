@@ -961,7 +961,7 @@ class _BABC_engine:
 
 
     def check_result_format(self):
-        valid_formats = ['average', 'best']
+        valid_formats = ('average', 'best')
         if (self.babc.result_format not in valid_formats):
             raise Exception('\nInvalid result format. Valid values include:' \
                             '\n\'average\'\n\'best\'')
