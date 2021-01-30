@@ -45,7 +45,8 @@ pip install beecolpy
 #Step-by-step:
 #Create object and set the solver parameters:
 abc_obj = abc(function, boundaries, colony_size=40, scouts=0.5,
-              iterations=50, min_max='min', nan_protection=True)
+              iterations=50, min_max='min', nan_protection=True,
+              log_agents=True)
 
 #Execute algorithm: 
 abc_obj.fit()
@@ -130,6 +131,13 @@ solution = abc_obj.get_solution()
         returning NaN.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -155,7 +163,7 @@ solution = abc_obj.get_solution()
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
 """
 ~~~~~~~~~~~~~~~~~
 
@@ -171,7 +179,8 @@ bin_abc_obj = bin_abc(function, bits_count, method='am',
                       best_model_iterations=0,
                       min_max='min', nan_protection=True,
                       transfer_function='sigmoid',
-                      best_model_iterations=0)
+                      best_model_iterations=0,
+                      log_agents=True)
 
 #Execute algorithm: 
 bin_abc_obj.fit()
@@ -352,6 +361,13 @@ solution = bin_abc_obj.get_solution()
             then "best_model_iterations" is increased by one.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -390,7 +406,7 @@ solution = bin_abc_obj.get_solution()
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
 
         Obs.: In binary form, this method returns the position of 
         each food source after transformation "binary -> continuous". 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -5,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="beecolpy",
-    version="2.3",
+    version="2.3.1",
     license='MIT',
     author="Samuel Carlos Pessoa Oliveira",
     author_email="samuelcpoliveira@gmail.com",
