@@ -44,8 +44,13 @@ pip install beecolpy
 ~~~~~~~~~~~~~~~~~python
 #Step-by-step:
 #Create object and set the solver parameters:
-abc_obj = abc(function, boundaries, colony_size=40, scouts=0.5,
-              iterations=50, min_max='min', nan_protection=True,
+abc_obj = abc(function,
+              boundaries,
+              colony_size=40,
+              scouts=0.5,
+              iterations=50,
+              min_max='min',
+              nan_protection=True,
               log_agents=True)
 
 #Execute algorithm: 
@@ -164,6 +169,12 @@ solution = abc_obj.get_solution()
     get_agents()
         Returns a list with the position of each food source during
         each iteration if "log_agents = True".
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
 """
 ~~~~~~~~~~~~~~~~~
 
@@ -174,10 +185,15 @@ solution = abc_obj.get_solution()
 ~~~~~~~~~~~~~~~~~python
 #Step-by-step:
 #Create object and set the solver parameters:
-bin_abc_obj = bin_abc(function, bits_count, method='am',
-                      colony_size=40, scouts=0.5, iterations=50,
+bin_abc_obj = bin_abc(function,
+                      bits_count,
+                      method='am',
+                      colony_size=40,
+                      scouts=0.5,
+                      iterations=50,
                       best_model_iterations=0,
-                      min_max='min', nan_protection=True,
+                      min_max='min',
+                      nan_protection=True,
                       transfer_function='sigmoid',
                       best_model_iterations=0,
                       log_agents=True)
@@ -412,6 +428,12 @@ solution = bin_abc_obj.get_solution()
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
 """
 ~~~~~~~~~~~~~~~~~
 
@@ -423,7 +445,7 @@ solution = bin_abc_obj.get_solution()
 ~~~~~~~~~~~~~~~~~python
 """
 To find the minimum  of sphere function on interval (-10 to 10) with
-2 dimensions in domain using default options:
+2 dimensions in domain using default parameters:
 """
 
 from beecolpy import abc

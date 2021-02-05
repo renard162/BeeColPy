@@ -176,6 +176,12 @@ class abc:
         Returns a list with the position of each food source during
         each iteration if "log_agents = True".
 
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
+
 
     Bibliography
     ----------
@@ -214,6 +220,7 @@ class abc:
         self.cost_function = function
         self.nan_protection = nan_protection
         self.log_agents = log_agents
+        self.reset_agents = False
 
         self.max_iterations = int(max([iterations, 1]))
         if (iterations < 1):
@@ -264,6 +271,12 @@ class abc:
         Obs.: Returns a list with values found as minimum/maximum 
         coordinate.
         '''
+        if self.reset_agents:
+            self.agents = []
+            if self.log_agents:
+                self.agents.append([food.position for food in self.foods])
+            self.reset_agents = False
+
         for _ in range(self.max_iterations):
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
@@ -289,11 +302,18 @@ class abc:
         return self.best_food_source.position
 
 
-    def get_agents(self):
+    def get_agents(self, reset_agents: bool=False):
         '''
         Returns a list with the position of each food source during
         each iteration.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         '''
+        self.reset_agents = reset_agents
         if not(self.log_agents):
             warn_message = 'Food source logging disabled.'
             wrn.warn(warn_message, RuntimeWarning)
@@ -566,6 +586,12 @@ class bin_abc:
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         
 
     Bibliography
@@ -710,7 +736,7 @@ class bin_abc:
         return self.result_bit_vector
 
 
-    def get_agents(self):
+    def get_agents(self, reset_agents: bool=False):
         '''
         Returns a list with the position of each food source during
         each iteration.
@@ -719,11 +745,14 @@ class bin_abc:
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         '''
-        if not(self._bin_abc_object.log_agents):
-            warn_message = 'Food source logging disabled.'
-            wrn.warn(warn_message, RuntimeWarning)
-        return self._bin_abc_object.agents
+        return self._bin_abc_object.get_agents(reset_agents)
 
 
     def get_solution(self, probability_vector: bool=False):
