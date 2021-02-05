@@ -1,2 +1,6 @@
 beecolpy/untitled0.py
 beecolpy/__pycache__/*
+beecolpy/tests/__pycache__/*
+.ipynb_checkpoints/*
+.pytest_cache/*
+.vscode/*
