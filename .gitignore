@@ -1,6 +1,9 @@
-beecolpy/untitled0.py
-beecolpy/__pycache__/*
-beecolpy/tests/__pycache__/*
+**/untitled*.py
+**/__pycache__/*
+**/*.egg-info/*
+.coverage
+.dev_test/*
 .ipynb_checkpoints/*
 .pytest_cache/*
 .vscode/*
+*.pyc
