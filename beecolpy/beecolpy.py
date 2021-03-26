@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 +----------------------------------------------------------------------+
  
@@ -141,6 +142,13 @@ class abc:
         returning NaN.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -166,7 +174,13 @@ class abc:
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
 
 
     Bibliography
@@ -198,12 +212,15 @@ class abc:
                  scouts: float=0.5,
                  iterations: int=50,
                  min_max: str='min',
-                 nan_protection: bool=True):
+                 nan_protection: bool=True,
+                 log_agents: bool=True):
 
         self.boundaries = boundaries
         self.min_max_selector = min_max
         self.cost_function = function
         self.nan_protection = nan_protection
+        self.log_agents = log_agents
+        self.reset_agents = False
 
         self.max_iterations = int(max([iterations, 1]))
         if (iterations < 1):
@@ -243,6 +260,8 @@ class abc:
             wrn.warn(warn_message, RuntimeWarning)
 
         self.agents = []
+        if self.log_agents:
+            self.agents.append([food.position for food in self.foods])
 
 
     def fit(self):
@@ -252,10 +271,13 @@ class abc:
         Obs.: Returns a list with values found as minimum/maximum 
         coordinate.
         '''
-        self.agents = []
-        self.agents.append([food.position for food in self.foods])
+        if self.reset_agents:
+            self.agents = []
+            if self.log_agents:
+                self.agents.append([food.position for food in self.foods])
+            self.reset_agents = False
 
-        for iteration in range(1, self.max_iterations+1):
+        for _ in range(self.max_iterations):
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
             _ABC_engine(self).employer_bee_phase()
@@ -272,17 +294,29 @@ class abc:
             #Generate up to one new food source that does not improve over scout_limit evaluation tries
             _ABC_engine(self).scout_bee_phase()
             
-            self.agents.append([food.position for food in self.foods])
-            self.iteration_status = iteration
+            #Update iteration status
+            self.iteration_status += 1
+            if self.log_agents:
+                self.agents.append([food.position for food in self.foods])
         
         return self.best_food_source.position
 
 
-    def get_agents(self):
+    def get_agents(self, reset_agents: bool=False):
         '''
         Returns a list with the position of each food source during
         each iteration.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         '''
+        self.reset_agents = reset_agents
+        if not(self.log_agents):
+            warn_message = 'Food source logging disabled.'
+            wrn.warn(warn_message, RuntimeWarning)
         return self.agents
 
 
@@ -501,6 +535,13 @@ class bin_abc:
             then "best_model_iterations" is increased by one.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -539,12 +580,18 @@ class bin_abc:
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
 
         Obs.: In binary form, this method returns the position of 
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         
 
     Bibliography
@@ -605,7 +652,8 @@ class bin_abc:
                  nan_protection: bool=True,
                  transfer_function: str='sigmoid',
                  result_format: str='best',
-                 best_model_iterations: int=0):
+                 best_model_iterations: int=0,
+                 log_agents: bool=True):
         
         self.method = method
         self.function = function
@@ -622,7 +670,7 @@ class bin_abc:
 
         self.result_bit_vector = None
 
-        self.executed_fit = False
+        self.executed_bin_fit = False
         
         #Method selector
         if (self.method == 'am'): #Angle Modulated
@@ -634,7 +682,8 @@ class bin_abc:
                                        scouts = scouts,
                                        iterations = iterations,
                                        min_max = min_max,
-                                       nan_protection = self._nan_protection)
+                                       nan_protection = self._nan_protection,
+                                       log_agents = log_agents)
 
         elif (self.method == 'bin'): #Binary ABC
             self.transfer_function = transfer_function
@@ -662,7 +711,8 @@ class bin_abc:
                                        scouts = scouts,
                                        iterations = iterations,
                                        min_max = min_max,
-                                       nan_protection = self._nan_protection)
+                                       nan_protection = self._nan_protection,
+                                       log_agents = log_agents)
 
         else:
             raise Exception('\nInvalid method. Valid values include:\n\'am\'\n\'bin\'')
@@ -676,7 +726,7 @@ class bin_abc:
         coordinate.
         '''
         self._bin_abc_object.fit()
-        self.executed_fit = True
+        self.executed_bin_fit = True
         if (self.method == 'am'): #Angle Modulated
             self.result_bit_vector = _AMABC_engine(self).get_bit_vector(
                                                             self._bin_abc_object.get_solution())
@@ -686,7 +736,7 @@ class bin_abc:
         return self.result_bit_vector
 
 
-    def get_agents(self):
+    def get_agents(self, reset_agents: bool=False):
         '''
         Returns a list with the position of each food source during
         each iteration.
@@ -695,8 +745,14 @@ class bin_abc:
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
         '''
-        return self._bin_abc_object.agents
+        return self._bin_abc_object.get_agents(reset_agents)
 
 
     def get_solution(self, probability_vector: bool=False):
@@ -719,7 +775,7 @@ class bin_abc:
                 - If probability_vector = False: (default)
                     "get_solution" returns the solution bit vector.
         '''
-        if (probability_vector and (self.method == 'bin') and self.executed_fit):
+        if (probability_vector and (self.method == 'bin') and self.executed_bin_fit):
             return _BABC_engine(self).get_probability_vector(
                                             self._bin_abc_object.get_solution())
         else:

@@ -44,8 +44,14 @@ pip install beecolpy
 ~~~~~~~~~~~~~~~~~python
 #Step-by-step:
 #Create object and set the solver parameters:
-abc_obj = abc(function, boundaries, colony_size=40, scouts=0.5,
-              iterations=50, min_max='min', nan_protection=True)
+abc_obj = abc(function,
+              boundaries,
+              colony_size=40,
+              scouts=0.5,
+              iterations=50,
+              min_max='min',
+              nan_protection=True,
+              log_agents=True)
 
 #Execute algorithm: 
 abc_obj.fit()
@@ -130,6 +136,13 @@ solution = abc_obj.get_solution()
         returning NaN.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -155,7 +168,13 @@ solution = abc_obj.get_solution()
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
 """
 ~~~~~~~~~~~~~~~~~
 
@@ -166,12 +185,18 @@ solution = abc_obj.get_solution()
 ~~~~~~~~~~~~~~~~~python
 #Step-by-step:
 #Create object and set the solver parameters:
-bin_abc_obj = bin_abc(function, bits_count, method='am',
-                      colony_size=40, scouts=0.5, iterations=50,
+bin_abc_obj = bin_abc(function,
+                      bits_count,
+                      method='am',
+                      colony_size=40,
+                      scouts=0.5,
+                      iterations=50,
                       best_model_iterations=0,
-                      min_max='min', nan_protection=True,
+                      min_max='min',
+                      nan_protection=True,
                       transfer_function='sigmoid',
-                      best_model_iterations=0)
+                      best_model_iterations=0,
+                      log_agents=True)
 
 #Execute algorithm: 
 bin_abc_obj.fit()
@@ -352,6 +377,13 @@ solution = bin_abc_obj.get_solution()
             then "best_model_iterations" is increased by one.
 
 
+    [log_agents] : Boolean --optional-- (default: True)
+        If true, beecolpy will register, before each iteration, the
+        position of each food source. Useful to debug but, if there a
+        high amount of food sources and/or iterations, this option
+        drastically increases memory usage.
+
+
     Methods
     ----------
     fit()
@@ -390,12 +422,18 @@ solution = bin_abc_obj.get_solution()
 
     get_agents()
         Returns a list with the position of each food source during
-        each iteration.
+        each iteration if "log_agents = True".
 
         Obs.: In binary form, this method returns the position of 
         each food source after transformation "binary -> continuous". 
         I.e. returns the values applied on angle modulation function 
         in AMABC or the values applied on transfer function in BABC.
+
+        Parameters
+        ----------
+        [reset_agents] : bool --optional-- (default: False)
+            If true, the food source position log will be cleaned in
+            next fit().
 """
 ~~~~~~~~~~~~~~~~~
 
@@ -407,7 +445,7 @@ solution = bin_abc_obj.get_solution()
 ~~~~~~~~~~~~~~~~~python
 """
 To find the minimum  of sphere function on interval (-10 to 10) with
-2 dimensions in domain using default options:
+2 dimensions in domain using default parameters:
 """
 
 from beecolpy import abc
