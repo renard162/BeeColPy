@@ -84,7 +84,7 @@ class abc:
     boundaries : List of Tuples
         A list of tuples containing the lower and upper boundaries of 
         each dimension of function domain.
-        
+
         Obs.: The number of boundaries determines the dimension of 
         function.
 
@@ -97,7 +97,7 @@ class abc:
         A value that determines the number of bees in algorithm. Half 
         of this amount determines the number of points analyzed (food 
         sources).
-        
+
         According articles, half of this number determines the amount 
         of Employed bees and other half is Onlooker bees.
 
@@ -142,11 +142,15 @@ class abc:
         returning NaN.
 
 
-    [log_agents] : Boolean --optional-- (default: True)
+    [log_agents] : Boolean --optional-- (default: False)
         If true, beecolpy will register, before each iteration, the
         position of each food source. Useful to debug but, if there a
         high amount of food sources and/or iterations, this option
         drastically increases memory usage.
+
+
+    [seed] : Int --optional-- (default: None)
+        If defined as an int, set the seed used in all random process.
 
 
     Methods
@@ -160,9 +164,6 @@ class abc:
 
     get_solution()
         Returns the value obtained after fit() the method.
-
-        Obs.: If fit() is not executed, return the position of
-        best initial condition.
 
 
     get_status()
@@ -213,7 +214,8 @@ class abc:
                  iterations: int=50,
                  min_max: str='min',
                  nan_protection: bool=True,
-                 log_agents: bool=True):
+                 log_agents: bool=False,
+                 seed: int=None):
 
         self.boundaries = boundaries
         self.min_max_selector = min_max
@@ -221,17 +223,18 @@ class abc:
         self.nan_protection = nan_protection
         self.log_agents = log_agents
         self.reset_agents = False
+        self.seed = seed
 
         self.max_iterations = int(max([iterations, 1]))
         if (iterations < 1):
             warn_message = 'Using the minimun value of iterations = 1'
             wrn.warn(warn_message, RuntimeWarning)
-        
+
         self.employed_onlookers_count = int(max([(colony_size/2), 2]))
         if (colony_size < 4):
             warn_message = 'Using the minimun value of colony_size = 4'
             wrn.warn(warn_message, RuntimeWarning)
-        
+
         if (scouts <= 0):
             self.scout_limit = int(self.employed_onlookers_count * len(self.boundaries))
             if (scouts < 0):
@@ -246,6 +249,9 @@ class abc:
         self.scout_status = 0
         self.iteration_status = 0
         self.nan_status = 0
+
+        if (self.seed is not None):
+            rng.seed(self.seed)
 
         self.foods = [None] * self.employed_onlookers_count
         for i in range(len(self.foods)):
@@ -271,6 +277,9 @@ class abc:
         Obs.: Returns a list with values found as minimum/maximum 
         coordinate.
         '''
+        if (self.seed is not None):
+            rng.seed(self.seed)
+
         if self.reset_agents:
             self.agents = []
             if self.log_agents:
@@ -281,24 +290,24 @@ class abc:
             #--> Employer bee phase <--
             #Generate and evaluate a neighbor point to every food source
             _ABC_engine(self).employer_bee_phase()
-    
+
             #--> Onlooker bee phase <--
             #Based in probability, generate a neighbor point and evaluate again some food sources
             #Same food source can be evaluated multiple times
             _ABC_engine(self).onlooker_bee_phase()
-            
+
             #--> Memorize best solution <--
             _ABC_engine(self).memorize_best_solution()
 
             #--> Scout bee phase <--
             #Generate up to one new food source that does not improve over scout_limit evaluation tries
             _ABC_engine(self).scout_bee_phase()
-            
+
             #Update iteration status
             self.iteration_status += 1
             if self.log_agents:
                 self.agents.append([food.position for food in self.foods])
-        
+
         return self.best_food_source.position
 
 
@@ -313,10 +322,8 @@ class abc:
             If true, the food source position log will be cleaned in
             next fit().
         '''
+        assert self.log_agents, 'Food source logging disabled.'
         self.reset_agents = reset_agents
-        if not(self.log_agents):
-            warn_message = 'Food source logging disabled.'
-            wrn.warn(warn_message, RuntimeWarning)
         return self.agents
 
 
@@ -324,9 +331,8 @@ class abc:
         '''
         Returns the value obtained after fit() the method.
 
-        Obs.: If fit() is not executed, return the position of
-        best initial condition.
         '''
+        assert (self.iteration_status > 0), 'fit() not executed yet!'
         return self.best_food_source.position
 
 
@@ -349,7 +355,7 @@ class bin_abc:
     Class that applies Artificial Bee Colony in a binary domain 
     function to find minimum or maximum of a function that's receive 
     the number of bits as input and returns a vector of bits as output.
-    
+
     There two methods in this solver:
         - Angle Modulated Artificial Bee Colony (AMABC [5]): (default)
             A deterministic based solver. Ideal to solve general 
@@ -362,7 +368,7 @@ class bin_abc:
                 - To solve very noisy problems, using the default 
                   result format ("best" result format) usually have 
                   good results. 
-                  
+
                 - To solve problems with great random components 
                   applied to each iteration, geting the most frequent 
                   bit ("average" result format) will have good results.
@@ -375,7 +381,7 @@ class bin_abc:
 
         Example: if the function is:
             def my_func(x): return x[0] or (x[1] and x[2])
-            
+
             Use "my_func" as parameter.
 
 
@@ -398,7 +404,7 @@ class bin_abc:
         Example: A function F(b1, b2) = y with:
             (-5 <= b1 <= 5) and (-20 <= b2 <= 20) have the boundaries:
                 [(-5,5), (-20,20)]
-    
+
     Obs.:
         - If boundaries are set: 
             boundaries take the priority over the bits_count.
@@ -406,7 +412,7 @@ class bin_abc:
         - If boundaries are not set: 
             boundaries became (-2,2) to each bit in AMABC method or 
             (-10,10) to each bit in BABC method.
-    
+
     -=x=--=x=--=x=--=x=--=x=-
 
 
@@ -423,7 +429,7 @@ class bin_abc:
         A value that determines the number of bees in algorithm. Half 
         of this amount determines the number of points analyzed 
         (food sources).
-        
+
         According articles, half of this number determines the amount 
         of Employed bees and other half is Onlooker bees.
 
@@ -442,7 +448,7 @@ class bin_abc:
                 Scout_limit = scouts
 
         Obs.1: Scout_limit is rounded down in all cases.
-        
+
         Obs.2: In Binary form, the scouts tends to be more relevant 
         than in continuous form. If your problem are badly solved, 
         try to reduce the scouts value.
@@ -464,17 +470,17 @@ class bin_abc:
     [nan_protection] : Boolean or Int --optional-- 
     (default (boolean): True)
         With "method='am'", this variable are used as a boolean.
-        
+
         With "method='bin'", this variable determines the number of 
         times the function are recalculated when it returns a NaN. 
         (default (int): 3)
-        
+
         If true or greater than 0, re-generate food sources that get 
         NaN value as cost during initialization or during scout 
         events. This option usually helps the algorithm stability 
         because, in rare cases, NaN values can lock the algorithm in 
         a infinite loop.
-        
+
         Obs.: NaN protection can drastically increases calculation 
         time if analysed function has too many values of domain 
         returning NaN.
@@ -483,7 +489,7 @@ class bin_abc:
     [transfer_function] : String --optional-- (default: 'sigmoid')
         Only used with "method='bin'". Defines the transfer function 
         used to calculate the probability for each bit becomes '1'.
-        
+
         The possibilities are explained on article [6]:
             - If transfer_function = 'sigmoid' : (default)
                 S(x) = 1/(1 + exp(-x))
@@ -535,11 +541,15 @@ class bin_abc:
             then "best_model_iterations" is increased by one.
 
 
-    [log_agents] : Boolean --optional-- (default: True)
+    [log_agents] : Boolean --optional-- (default: False)
         If true, beecolpy will register, before each iteration, the
         position of each food source. Useful to debug but, if there a
         high amount of food sources and/or iterations, this option
         drastically increases memory usage.
+
+
+    [seed] : Int --optional-- (default: None)
+        If defined as an int, set the seed used in all random process.
 
 
     Methods
@@ -553,8 +563,6 @@ class bin_abc:
 
     get_solution()
         Returns the value obtained after fit() the method.
-
-        Obs.: If fit() is not executed, return "None".
 
         Parameters
         ----------
@@ -592,7 +600,7 @@ class bin_abc:
         [reset_agents] : bool --optional-- (default: False)
             If true, the food source position log will be cleaned in
             next fit().
-        
+
 
     Bibliography
     ----------
@@ -653,37 +661,41 @@ class bin_abc:
                  transfer_function: str='sigmoid',
                  result_format: str='best',
                  best_model_iterations: int=0,
-                 log_agents: bool=True):
-        
+                 log_agents: bool=False,
+                 seed: int=None):
+
         self.method = method
         self.function = function
-        
+        self.seed = seed
+
         bits_count = int(bits_count)
         if ((len(boundaries) == 0) and (bits_count <= 0)):
             raise Exception('\nInvalid bit vector length. ' \
                             '\'bits_count\' need to be greater than 0 or define \'boundaries\' list.')
 
         if (nan_protection < 0):
-            warn_message = 'NaN protection disabled. Negative nan_protection given.'
+            warn_message = 'Negative nan_protection given. NaN protection disabled.'
             wrn.warn(warn_message, RuntimeWarning)
         self._nan_protection = (nan_protection > 0)
 
         self.result_bit_vector = None
 
         self.executed_bin_fit = False
-        
+
         #Method selector
         if (self.method == 'am'): #Angle Modulated
             boundaries = [(-2, 2) for _ in range(bits_count)] if (len(boundaries) == 0) \
                                                               else boundaries
 
-            self._bin_abc_object = abc(_AMABC_engine(self).am_cost_function, boundaries,
+            self._bin_abc_object = abc(function = _AMABC_engine(self).am_cost_function,
+                                       boundaries = boundaries,
                                        colony_size = colony_size,
                                        scouts = scouts,
                                        iterations = iterations,
                                        min_max = min_max,
                                        nan_protection = self._nan_protection,
-                                       log_agents = log_agents)
+                                       log_agents = log_agents,
+                                       seed = self.seed)
 
         elif (self.method == 'bin'): #Binary ABC
             self.transfer_function = transfer_function
@@ -706,17 +718,19 @@ class bin_abc:
             self.boundaries = [(-10, 10) for _ in range(bits_count)] if (len(boundaries) == 0) \
                                                                      else boundaries
 
-            self._bin_abc_object = abc(_BABC_engine(self).bin_cost_function, self.boundaries,
+            self._bin_abc_object = abc(function = _BABC_engine(self).bin_cost_function,
+                                       boundaries = self.boundaries,
                                        colony_size = colony_size,
                                        scouts = scouts,
                                        iterations = iterations,
                                        min_max = min_max,
                                        nan_protection = self._nan_protection,
-                                       log_agents = log_agents)
+                                       log_agents = log_agents,
+                                       seed = self.seed)
 
         else:
             raise Exception('\nInvalid method. Valid values include:\n\'am\'\n\'bin\'')
-        
+
 
     def fit(self):
         '''
@@ -731,6 +745,9 @@ class bin_abc:
             self.result_bit_vector = _AMABC_engine(self).get_bit_vector(
                                                             self._bin_abc_object.get_solution())
         elif (self.method == 'bin'): #Binary ABC
+            if (self.seed is not None):
+                rng.seed(self.seed)
+
             self.result_bit_vector = _BABC_engine(self).get_result_vector(
                                                             self._bin_abc_object.get_solution())
         return self.result_bit_vector
@@ -759,8 +776,6 @@ class bin_abc:
         '''
         Returns the value obtained after fit() the method.
 
-        Obs.: If fit() is not executed, return "None".
-
         Parameters
         ----------
         [probability_vector] : bool --optional-- (default: False)
@@ -775,6 +790,8 @@ class bin_abc:
                 - If probability_vector = False: (default)
                     "get_solution" returns the solution bit vector.
         '''
+        assert self.executed_bin_fit, 'fit() not executed yet!'
+
         if (probability_vector and (self.method == 'bin') and self.executed_bin_fit):
             return _BABC_engine(self).get_probability_vector(
                                             self._bin_abc_object.get_solution())
@@ -795,89 +812,6 @@ class bin_abc:
 
 
 
-class binabc(bin_abc):
-    '''
-    DEPRECATION WARNING:
-        This function will be removed in next versions. 
-        Use "bin_abc" with "method='bin'" instead.
-        
-    Class that applies Binary Artificial Bee Colony (BABC [5], based 
-    in Binary PSO [4]) algorithm to find minimum or maximum of a 
-    function that's receive the number of bits as input and returns 
-    a vector of bits as output.
-    '''
-    def __init__(self,
-                 function,
-                 bits_count: int=0,
-                 boundaries: list=[],
-                 transfer_function: str='sigmoid',
-                 colony_size: int=40,
-                 scouts: float=0.5,
-                 iterations: int=50,
-                 best_model_iterations: int=0,
-                 min_max: str='min',
-                 nan_protection: int=4):
-        
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'bin\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-
-        bin_abc.__init__(self,
-                         function = function,
-                         bits_count = bits_count,
-                         boundaries = boundaries,
-                         colony_size = colony_size,
-                         scouts = scouts,
-                         iterations = iterations,
-                         min_max = min_max,
-                         method = 'bin',
-                         nan_protection = nan_protection,
-                         transfer_function = transfer_function,
-                         result_format = 'best',
-                         best_model_iterations = best_model_iterations)
-
-
-
-class amabc(bin_abc):
-    '''
-    DEPRECATION WARNING:
-        This function will be removed in next versions. 
-        Use "bin_abc" with "method='am'" instead.
-        
-    Class that applies Angle Modulated Artificial Bee Colony 
-    (AMABC [5]) algorithm to find minimum or maximum of a function 
-    that's receive the number of bits as input and returns a vector 
-    of bits as output.
-    '''
-    def __init__(self,
-                 function,
-                 bits_count: int=0,
-                 boundaries: list=[],
-                 colony_size: int=40,
-                 scouts: float=0.5,
-                 iterations: int=50,
-                 min_max: str='min',
-                 nan_protection: bool=True):
-
-        warn_message = 'This object will be removed. ' \
-            'Use "bin_abc" with "method=\'am\'" instead.'
-        wrn.warn(warn_message, DeprecationWarning)
-
-        bin_abc.__init__(self,
-                         function = function,
-                         bits_count = bits_count,
-                         boundaries = boundaries,
-                         colony_size = colony_size,
-                         scouts = scouts,
-                         iterations = iterations,
-                         min_max = min_max,
-                         method = 'am',
-                         nan_protection = nan_protection,
-                         transfer_function = 'sigmoid',
-                         result_format = 'best',
-                         best_model_iterations = 0)
-
-
 
 
 class _FoodSource:
@@ -893,14 +827,14 @@ class _FoodSource:
     def evaluate_neighbor(self, partner_position):
         #Randomize one coodinate (one dimension) to generate a neighbor point
         j = rng.randrange(0, len(self.abc.boundaries))
-        
+
         #eq. (2.2) [1] (new coordinate "x_j" to generate a neighbor point)
         xj_new = self.position[j] + rng.uniform(-1, 1)*(self.position[j] - partner_position[j])
 
         #Check boundaries
         xj_new = self.abc.boundaries[j][0] if (xj_new < self.abc.boundaries[j][0]) else \
             self.abc.boundaries[j][1] if (xj_new > self.abc.boundaries[j][1]) else xj_new
-        
+
         #Changes the coordinate "j" from food source to new "x_j" generating the neighbor point
         neighbor_position = [(self.position[i] if (i != j) else xj_new) for i in range(len(self.abc.boundaries))]
         neighbor_fit = self.engine.calculate_fit(neighbor_position)
@@ -1065,7 +999,7 @@ class _BABC_engine:
 
         if self.babc._nan_protection:
             _, cost_value = self.recalculate_nan(bit_vector, cost_value, value_vector)
-            
+
         return cost_value
 
 
@@ -1103,7 +1037,7 @@ class _BABC_engine:
                 temp_cost_value = self.babc.function(temp_bit_vector)
                 temp_bit_vector, _ = self.recalculate_nan(
                                         temp_bit_vector, temp_cost_value, value_vector)
-            
+
             solution_collection[i,:] = temp_bit_vector
 
         for j in range(len(self.babc.boundaries)):
