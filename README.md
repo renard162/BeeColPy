@@ -78,7 +78,7 @@ solution = abc_obj.get_solution()
     boundaries : List of Tuples
         A list of tuples containing the lower and upper boundaries of 
         each dimension of function domain.
-        
+
         Obs.: The number of boundaries determines the dimension of 
         function.
 
@@ -91,7 +91,7 @@ solution = abc_obj.get_solution()
         A value that determines the number of bees in algorithm. Half 
         of this amount determines the number of points analyzed (food 
         sources).
-        
+
         According articles, half of this number determines the amount 
         of Employed bees and other half is Onlooker bees.
 
@@ -136,11 +136,15 @@ solution = abc_obj.get_solution()
         returning NaN.
 
 
-    [log_agents] : Boolean --optional-- (default: True)
+    [log_agents] : Boolean --optional-- (default: False)
         If true, beecolpy will register, before each iteration, the
         position of each food source. Useful to debug but, if there a
         high amount of food sources and/or iterations, this option
         drastically increases memory usage.
+
+
+    [seed] : Int --optional-- (default: None)
+        If defined as an int, set the seed used in all random process.
 
 
     Methods
@@ -154,9 +158,6 @@ solution = abc_obj.get_solution()
 
     get_solution()
         Returns the value obtained after fit() the method.
-
-        Obs.: If fit() is not executed, return the position of
-        best initial condition.
 
 
     get_status()
@@ -217,7 +218,7 @@ solution = bin_abc_obj.get_solution()
 
         Example: if the function is:
             def my_func(x): return x[0] or (x[1] and x[2])
-            
+
             Use "my_func" as parameter.
 
 
@@ -240,7 +241,7 @@ solution = bin_abc_obj.get_solution()
         Example: A function F(b1, b2) = y with:
             (-5 <= b1 <= 5) and (-20 <= b2 <= 20) have the boundaries:
                 [(-5,5), (-20,20)]
-    
+
     Obs.:
         - If boundaries are set: 
             boundaries take the priority over the bits_count.
@@ -248,7 +249,7 @@ solution = bin_abc_obj.get_solution()
         - If boundaries are not set: 
             boundaries became (-2,2) to each bit in AMABC method or 
             (-10,10) to each bit in BABC method.
-    
+
     -=x=--=x=--=x=--=x=--=x=-
 
 
@@ -265,7 +266,7 @@ solution = bin_abc_obj.get_solution()
         A value that determines the number of bees in algorithm. Half 
         of this amount determines the number of points analyzed 
         (food sources).
-        
+
         According articles, half of this number determines the amount 
         of Employed bees and other half is Onlooker bees.
 
@@ -284,7 +285,7 @@ solution = bin_abc_obj.get_solution()
                 Scout_limit = scouts
 
         Obs.1: Scout_limit is rounded down in all cases.
-        
+
         Obs.2: In Binary form, the scouts tends to be more relevant 
         than in continuous form. If your problem are badly solved, 
         try to reduce the scouts value.
@@ -306,17 +307,17 @@ solution = bin_abc_obj.get_solution()
     [nan_protection] : Boolean or Int --optional-- 
     (default (boolean): True)
         With "method='am'", this variable are used as a boolean.
-        
+
         With "method='bin'", this variable determines the number of 
         times the function are recalculated when it returns a NaN. 
         (default (int): 3)
-        
+
         If true or greater than 0, re-generate food sources that get 
         NaN value as cost during initialization or during scout 
         events. This option usually helps the algorithm stability 
         because, in rare cases, NaN values can lock the algorithm in 
         a infinite loop.
-        
+
         Obs.: NaN protection can drastically increases calculation 
         time if analysed function has too many values of domain 
         returning NaN.
@@ -325,7 +326,7 @@ solution = bin_abc_obj.get_solution()
     [transfer_function] : String --optional-- (default: 'sigmoid')
         Only used with "method='bin'". Defines the transfer function 
         used to calculate the probability for each bit becomes '1'.
-        
+
         The possibilities are explained on article [6]:
             - If transfer_function = 'sigmoid' : (default)
                 S(x) = 1/(1 + exp(-x))
@@ -377,11 +378,15 @@ solution = bin_abc_obj.get_solution()
             then "best_model_iterations" is increased by one.
 
 
-    [log_agents] : Boolean --optional-- (default: True)
+    [log_agents] : Boolean --optional-- (default: False)
         If true, beecolpy will register, before each iteration, the
         position of each food source. Useful to debug but, if there a
         high amount of food sources and/or iterations, this option
         drastically increases memory usage.
+
+
+    [seed] : Int --optional-- (default: None)
+        If defined as an int, set the seed used in all random process.
 
 
     Methods
@@ -395,8 +400,6 @@ solution = bin_abc_obj.get_solution()
 
     get_solution()
         Returns the value obtained after fit() the method.
-
-        Obs.: If fit() is not executed, return "None".
 
         Parameters
         ----------
